@@ -1,0 +1,871 @@
+/* LotoFácil Estratégica - Estilos Customizados */
+/* Autor: Sistema Inteligente de Análise Lotofácil */
+
+/* Gradientes personalizados */
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+}
+
+/* Efeitos de sombra e hover dos cards */
+.card-shadow {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-shadow:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Bolas dos números */
+.number-ball {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    margin: 3px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.number-ball::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+}
+
+.number-ball:hover::before {
+    left: 100%;
+}
+
+.number-ball-result {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border: 2px solid #ffffff;
+}
+
+.number-ball-game {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    border: 2px solid #ffffff;
+}
+
+.number-ball:hover {
+    transform: scale(1.1);
+}
+
+/* Bolas pequenas para o histórico */
+.number-ball-sm {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 1px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Animações de loading */
+.loading {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Loading indicator personalizado */
+#loading-indicator {
+    z-index: 9999;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+#loading-indicator .animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Efeito de busca automática */
+.auto-search-active {
+    background: linear-gradient(90deg, #E0E7FF, #C7D2FE, #E0E7FF);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+}
+
+/* Estilos para o overlay de loading */
+#loading-overlay {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.loader {
+    border-top-color: #4f46e5; /* Indigo-600 */
+    animation: spin 1s linear infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Estilos para o novo sistema de alertas */
+#alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    min-width: 300px;
+    max-width: 400px;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    margin-right: 15px;
+}
+
+.notification-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    line-height: 1;
+    opacity: 0.8;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.notification-close:hover {
+    opacity: 1;
+}
+
+/* Animações de entrada e saída */
+@keyframes slide-in-right {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+.slide-in-right {
+    animation: slide-in-right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.fade-out {
+    animation: fade-out 0.5s ease-out both;
+}
+
+/* Estilos para o overlay de loading */
+#loading-overlay {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.loader {
+    border-top-color: #4f46e5; /* Indigo-600 */
+    animation: spin 1s linear infinite;
+}
+
+/* Responsividade melhorada */
+@media (max-width: 640px) {
+    .number-ball {
+        width: 36px;
+        height: 36px;
+        font-size: 12px;
+        margin: 2px;
+    }
+    
+    .card-shadow:hover {
+        transform: translateY(-4px) scale(1.01);
+    }
+    
+    /* Melhorar layout dos jogos em mobile */
+    .numeros-aposta {
+        gap: 0.125rem;
+        justify-content: flex-start;
+    }
+    
+    /* Ajustar espaçamento dos cards */
+    .grid {
+        gap: 1rem;
+    }
+    
+    /* Melhorar botões de ação */
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .action-buttons button {
+        width: 100%;
+        justify-content: center;
+        min-height: 44px; /* Mínimo para touch */
+    }
+}
+
+/* Melhorias para tablets */
+@media (max-width: 768px) and (min-width: 641px) {
+    .number-ball {
+        width: 38px;
+        height: 38px;
+        font-size: 13px;
+    }
+    
+    .grid {
+        gap: 1.25rem;
+    }
+}
+
+/* Otimizações para telas muito pequenas */
+@media (max-width: 480px) {
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .number-ball {
+        width: 32px;
+        height: 32px;
+        font-size: 11px;
+        margin: 1px;
+    }
+    
+    .modal-historico {
+        margin: 0.5rem;
+        max-width: calc(100vw - 1rem);
+        max-height: calc(100vh - 1rem);
+    }
+    
+    /* Melhorar layout do cabeçalho */
+    header .container {
+        padding: 0.75rem;
+    }
+    
+    header h1 {
+        font-size: 1.25rem;
+    }
+    
+    header p {
+        font-size: 0.75rem;
+    }
+    
+    /* Ajustar cards de análise */
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+}
+
+/* Grid responsivo para cards de análise */
+@media (min-width: 1280px) {
+    .xl\:grid-cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    
+    .xl\:grid-cols-5 {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
+/* Forçar exibição de todas as 12 estratégias */
+#cardsAnalises {
+    display: grid !important;
+    grid-auto-rows: auto !important;
+    overflow: visible !important;
+    min-height: auto !important;
+}
+
+#cardsAnalises > div {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+/* Garantir que todas as estratégias sejam visíveis */
+#cardsAnalises [data-strategy-id] {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 1 !important;
+}
+
+/* Layout específico para as 12 estratégias em 4x3 */
+@media (min-width: 1280px) {
+    #cardsAnalises {
+        grid-template-columns: repeat(4, 1fr) !important;
+        max-width: 100%;
+    }
+    
+    #cardsAnalises > div {
+        min-height: 320px;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+    #cardsAnalises {
+        grid-template-columns: repeat(3, 1fr) !important;
+        max-width: 100%;
+    }
+    
+    #cardsAnalises > div {
+        min-height: 340px;
+    }
+}
+
+@media (max-width: 1023px) and (min-width: 640px) {
+    #cardsAnalises {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 639px) {
+    #cardsAnalises {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+}
+
+/* Efeitos especiais para estratégias */
+.frequencia-mensal {
+    background: linear-gradient(135deg, #0D9488 0%, #06B6D4 100%);
+    animation: pulse-teal 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-teal {
+    0% {
+        box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 0 10px rgba(13, 148, 136, 0);
+    }
+}
+
+.frequencia-mensal:hover {
+    animation: none;
+    transform: translateY(-4px) scale(1.05);
+}
+
+/* Indicador visual para estratégias que usam dados reais */
+.dados-reais::after {
+    content: '🔥';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 20px;
+    z-index: 10;
+}
+
+/* Estados de foco melhorados para acessibilidade */
+button:focus,
+input:focus,
+select:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Modo escuro (preparação futura) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #0f172a;
+        --text-color: #f1f5f9;
+        --card-bg: #1e293b;
+    }
+}
+
+/* Animações de resultado */
+.result-appear {
+    animation: resultAppear 0.8s ease-out forwards;
+}
+
+@keyframes resultAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translateY(-5px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Efeito de typing para textos */
+.typing-effect {
+    overflow: hidden;
+    border-right: 2px solid #667eea;
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: #667eea; }
+}
+
+/* Melhorias de performance */
+.card-shadow,
+.number-ball,
+.btn-primary {
+    will-change: transform;
+}
+
+/* Indicadores de carregamento */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+    
+    .number-ball {
+        border: 1px solid #000 !important;
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* Estilos específicos para histórico e performance */
+
+/* Cards de histórico */
+.historico-card {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.historico-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.historico-card.premiado::before {
+    content: '🏆';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 24px;
+    z-index: 10;
+}
+
+/* Estatísticas responsivas */
+.stats-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}
+
+/* Botões de ação responsivos */
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+@media (max-width: 640px) {
+    .action-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .action-buttons button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Filtros responsivos */
+.filters-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+@media (max-width: 768px) {
+    .filters-container {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+}
+
+/* Cards de aposta responsivos */
+.aposta-card {
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.aposta-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Grid de acertos responsivo */
+.acertos-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .acertos-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .acertos-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.25rem;
+    }
+}
+
+/* Números das apostas responsivos */
+.numeros-aposta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.125rem;
+    justify-content: center;
+}
+
+@media (max-width: 480px) {
+    .numeros-aposta .number-ball {
+        width: 32px;
+        height: 32px;
+        font-size: 11px;
+        margin: 1px;
+    }
+}
+
+/* Modal responsivo */
+.modal-historico {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .modal-historico {
+        margin: 1rem;
+        max-width: calc(100vw - 2rem);
+        max-height: calc(100vh - 2rem);
+    }
+}
+
+/* Gráficos responsivos */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-container {
+        height: 200px;
+    }
+}
+
+/* Tabela de estatísticas responsiva */
+.stats-table {
+    overflow-x: auto;
+}
+
+.stats-table table {
+    min-width: 100%;
+    border-collapse: collapse;
+}
+
+@media (max-width: 640px) {
+    .stats-table {
+        font-size: 0.875rem;
+    }
+}
+
+/* Loading específico para histórico */
+.loading-historico {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: #6B7280;
+}
+
+.loading-historico .spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid #E5E7EB;
+    border-top-color: #6366F1;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 0.75rem;
+}
+
+/* Estados vazios */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #9CA3AF;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Indicadores de status */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-pendente {
+    background-color: #FEF3C7;
+    color: #D97706;
+}
+
+.status-conferido {
+    background-color: #F3F4F6;
+    color: #6B7280;
+}
+
+.status-premiado {
+    background-color: #D1FAE5;
+    color: #10B981;
+}
+
+/* Animações específicas do histórico */
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bounce-in {
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Destacar premiações */
+.premio-highlight {
+    background: linear-gradient(135deg, #10B981, #34D399);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Melhorias na navegação mobile */
+@media (max-width: 768px) {
+    .nav-mobile {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid #E5E7EB;
+        padding: 0.75rem;
+        display: flex;
+        justify-content: space-around;
+        z-index: 40;
+    }
+    
+    .nav-mobile a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem;
+        text-decoration: none;
+        color: #6B7280;
+        font-size: 0.75rem;
+        transition: color 0.2s;
+    }
+    
+    .nav-mobile a:hover,
+    .nav-mobile a.active {
+        color: #6366F1;
+    }
+    
+    .nav-mobile i {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Adicionar espaço no final da página para navegação mobile */
+    body {
+        padding-bottom: 80px;
+    }
+}
+
+/* Otimizações para impressão do histórico */
+@media print {
+    .historico-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+    
+    .action-buttons {
+        display: none;
+    }
+    
+    .filters-container {
+        display: none;
+    }
+    
+    .chart-container {
+        display: none;
+    }
+}
+
+/* Acessibilidade melhorada */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Focus states melhorados */
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+    outline: 2px solid #6366F1;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Transições suaves para todos os elementos do histórico */
+.historico-section * {
+    transition: all 0.2s ease;
+}
