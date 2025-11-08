@@ -1,4 +1,4 @@
-Set-Location "t:\gerador_lotofacil"
+Set-Location $PSScriptRoot
 
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:8081/")
