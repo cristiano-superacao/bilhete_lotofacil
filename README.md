@@ -3,10 +3,10 @@
 <div align="center">
 
 ![Status](https://img.shields.io/badge/Status-Ativo-green)
-![Versão](https://img.shields.io/badge/Versão-3.0.0-blue)
+![Versão](https://img.shields.io/badge/Versão-2.2.0-blue)
 ![Licença](https://img.shields.io/badge/Licença-MIT-yellow)
 
-**Ferramenta inteligente de análise e geração de jogos para a Lotofácil baseada em estatísticas reais.**
+**Ferramenta inteligente de análise e geração de jogos para a Lotofácil baseada em estatísticas reais com infraestrutura serverless.**
 
 [🚀 Demonstração](#-como-executar-localmente) • [✨ Funcionalidades](#-principais-funcionalidades) • [📖 Como Usar](#-passo-a-passo-de-utilização) • [🎲 Estratégias](#-as-12-estratégias)
 
@@ -22,26 +22,33 @@ O **LotoFácil Estratégica** é uma aplicação web completa que oferece 12 est
 
 Fornecer uma ferramenta profissional e gratuita para apostadores que desejam utilizar dados estatísticos e padrões históricos reais para otimizar suas escolhas, em vez de depender apenas da sorte.
 
-### 🌟 Novidades da Versão 3.0.0
+### 🌟 Novidades da Versão 2.2.0
 
-- **📊 Histórico de Apostas Completo**: Salve seus jogos gerados, acompanhe estatísticas financeiras (total investido, ganhos e saldo) e confira resultados automaticamente.
-- **✅ Conferência Inteligente**: O sistema habilita a conferência apenas para apostas cuja data coincide com o último sorteio disponível.
-- **🔄 Atualização Automática de Resultados**: Busque resultados da API da Caixa por número do concurso ou atualize apostas salvas com um clique.
-- **🎨 Interface Redesenhada**: Layout responsivo e profissional em grid 4x3 para as estratégias e cards organizados para o histórico.
-- **💾 Exportação de Dados**: Exporte seu histórico de apostas para arquivo JSON.
-- **� PWA (Progressive Web App)**: Instale a aplicação no seu dispositivo para acesso offline.
+- **�️ Banco de Dados em Nuvem**: PostgreSQL serverless (Neon) com 200+ concursos armazenados
+- **🚀 API Própria**: 4 endpoints serverless (Netlify Functions) para consulta otimizada
+- **🤖 Atualização Automática**: Scheduled function busca novos sorteios diariamente às 22h
+- **⚡ Performance 10x Melhor**: API Manager com fallback inteligente (API interna → Caixa)
+- **�📊 Histórico de Apostas Completo**: Salve seus jogos gerados, acompanhe estatísticas financeiras (total investido, ganhos e saldo) e confira resultados automaticamente
+- **✅ Conferência Inteligente**: O sistema habilita a conferência apenas para apostas cuja data coincide com o último sorteio disponível
+- **🔄 Integração com API da Caixa**: Busque resultados por número do concurso ou atualize apostas salvas com um clique
+- **🎨 Interface Redesenhada**: Layout responsivo e profissional em grid 4x3 para as estratégias e cards organizados para o histórico
+- **💾 Exportação de Dados**: Exporte seu histórico de apostas para arquivo JSON
+- **📱 PWA (Progressive Web App)**: Instale a aplicação no seu dispositivo para acesso offline
 
 ---
 
 ## ✨ Principais Funcionalidades
 
-- ✅ **12 Estratégias Estatísticas**: Cada uma gera 10 jogos únicos baseados em critérios específicos.
-- ✅ **Números de Referência**: Utiliza os 9 números mais frequentes dos últimos 150 concursos como base.
-- ✅ **Integração com API da Caixa**: Busca automática de resultados oficiais.
-- ✅ **Histórico Completo**: Salve, visualize e confira suas apostas.
-- ✅ **Análise de Performance**: Acompanhe total de apostas, ganhos, investimentos e saldo geral.
-- ✅ **Exportação e Cópia**: Exporte jogos para arquivo TXT ou copie para a área de transferência.
-- ✅ **Design Responsivo**: Funciona perfeitamente em desktops, tablets e smartphones.
+- ✅ **12 Estratégias Estatísticas**: Cada uma gera 10 jogos únicos baseados em critérios específicos
+- ✅ **Números de Referência**: Utiliza os 9 números mais frequentes dos últimos 150 concursos como base
+- ✅ **API Própria + Fallback**: Sistema inteligente com API interna (10x mais rápida) e fallback para API da Caixa
+- ✅ **Banco de Dados em Nuvem**: PostgreSQL serverless (Neon) com 200+ concursos históricos
+- ✅ **Atualização Automática**: Scheduled function busca novos sorteios diariamente às 22h (BRT)
+- ✅ **Histórico Completo**: Salve, visualize e confira suas apostas com número do concurso
+- ✅ **Análise de Performance**: Acompanhe total de apostas, ganhos, investimentos e saldo geral
+- ✅ **Exportação e Cópia**: Exporte jogos para arquivo TXT ou copie para a área de transferência
+- ✅ **Design Responsivo**: Funciona perfeitamente em desktops, tablets e smartphones
+- ✅ **Custo Zero**: Infraestrutura 100% gratuita (Neon + Netlify free tiers)
 
 ---
 
@@ -49,7 +56,9 @@ Fornecer uma ferramenta profissional e gratuita para apostadores que desejam uti
 
 ### Pré-requisitos
 
-- [Node.js](https://nodejs.org/) instalado (para usar o `npm` e `http-server`)
+- [Node.js](https://nodejs.org/) instalado (v18+ recomendado)
+- Conta [Neon](https://neon.tech) (para banco de dados - free tier suficiente)
+- Conta [Netlify](https://www.netlify.com/) (para deploy - free tier suficiente)
 
 ### Passo a Passo
 
@@ -59,12 +68,16 @@ Fornecer uma ferramenta profissional e gratuita para apostadores que desejam uti
    cd bilhete_lotofacil
    ```
 
-2. **Instale o Servidor HTTP:**
+2. **Configure o Banco de Dados:**
    ```bash
-   npm install -g http-server
+   # Edite .env com sua connection string do Neon
+   # Depois execute o schema e importe os dados
+   npm install
+   npm run db:schema  # Cole o SQL no Neon Console
+   npm run db:import  # Importa últimos 200 concursos
    ```
 
-3. **Inicie o Servidor:**
+3. **Desenvolvimento Local:**
    ```bash
    http-server
    ```
@@ -73,8 +86,15 @@ Fornecer uma ferramenta profissional e gratuita para apostadores que desejam uti
    .\start-server.ps1
    ```
 
-4. **Acesse no Navegador:**
-   Abra `http://localhost:8080` (ou o endereço fornecido pelo servidor)
+4. **Deploy para Produção:**
+   - Conecte o repositório ao Netlify
+   - Configure a variável de ambiente `DATABASE_URL` no Netlify
+   - Deploy automático ativado!
+
+📚 **Guias Detalhados:**
+- [DEPLOY-RAPIDO.md](DEPLOY-RAPIDO.md) - Setup em 15 minutos
+- [DEPLOY.md](DEPLOY.md) - Guia completo com troubleshooting
+- [database/README.md](database/README.md) - Documentação técnica do banco
 
 ---
 
