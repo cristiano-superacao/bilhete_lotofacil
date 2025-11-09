@@ -88,10 +88,10 @@ Existem duas formas de adicionar resultados:
    - Com as dezenas ordenadas e formatadas
 
 4. **Opções Disponíveis**
-   - 📋 **Copiar**: Copia todos os jogos para a área de transferência
-   - 💾 **Exportar**: Baixa os jogos em formato de texto
-   - 🔄 **Gerar Novos**: Gera novos jogos com a mesma estratégia
-   - 💿 **Salvar no Histórico**: Salva os jogos para conferência futura
+   - 📋 **Copiar**: Copia todos os 10 jogos para a área de transferência (formato texto)
+   - 💾 **Exportar**: Baixa os jogos em formato `.txt` com nome personalizado (estratégia + data)
+   - 🔄 **Gerar Novos**: Gera 10 novos jogos diferentes com a mesma estratégia
+   - 💿 **Salvar no Histórico**: Salva os jogos vinculados ao próximo concurso para conferência futura
 
 ---
 
@@ -165,22 +165,33 @@ Existem duas formas de adicionar resultados:
 ### 💾 Salvar Jogos no Histórico
 
 1. Após gerar jogos, clique em **"Salvar no Histórico"**
-2. Os jogos serão salvos com:
+2. Os jogos serão automaticamente vinculados ao próximo concurso disponível
+3. O sistema salvará:
    - Data e hora de criação
    - Estratégia utilizada
    - Todos os 10 jogos gerados
+   - **Número do concurso de referência** (para conferência)
+   - **Data do sorteio** do concurso vinculado
 
 ### 🔍 Conferir Apostas
 
-**⚠️ Regra Importante**: Só é possível conferir jogos APÓS o sorteio ter acontecido!
+**⚠️ Regra Importante**: Só é possível conferir jogos APÓS o resultado oficial do concurso vinculado estar disponível!
+
+**Sistema de Vinculação por Concurso**:
+- Cada aposta salva é automaticamente vinculada a um concurso específico
+- O botão "Conferir" só é habilitado quando o resultado daquele concurso está disponível
+- Você verá no card: o número do concurso e a data do sorteio de referência
+
+**Como Conferir**:
 
 1. Localize o card da aposta no histórico
-2. Clique no botão verde **"Conferir"**
-3. O sistema irá:
-   - ✅ Verificar se já houve sorteio após a geração
-   - 📡 Buscar o resultado mais recente da API da Caixa
-   - 🎯 Comparar seus jogos com os números sorteados
+2. Aguarde o concurso de referência ser sorteado
+3. Clique no botão verde **"Conferir"** (habilitado automaticamente)
+4. O sistema irá:
+   - ✅ Buscar o resultado oficial do concurso vinculado
+   - 🎯 Comparar seus 10 jogos com os números sorteados
    - 💰 Calcular acertos e prêmios automaticamente
+   - 📊 Atualizar as estatísticas gerais
 
 **Tabela de Premiação**:
 - 15 acertos: R$ 398.110,55
@@ -287,10 +298,12 @@ Contadores automáticos de:
 - Você pode cadastrar manualmente sem problemas
 
 ### ❌ Problema: Não consigo conferir aposta
+
 **Solução**:
-- Verifique se já houve sorteio após a geração dos jogos
-- O sistema só permite conferir após o resultado oficial
-- Aguarde o próximo concurso e tente novamente
+- Verifique se o resultado do concurso vinculado já foi divulgado oficialmente
+- O botão "Conferir" só é habilitado quando o concurso de referência tem resultado disponível
+- Você pode ver o número do concurso e a data no próprio card da aposta
+- Se o concurso já foi sorteado mas o botão ainda está desabilitado, clique em "Atualizar Resultados" no topo do histórico
 
 ### ❌ Problema: Estratégia não gera jogos
 **Solução**:
@@ -314,6 +327,15 @@ Para dúvidas, sugestões ou reportar problemas:
 ---
 
 ## 📝 Changelog
+
+### Versão 2.1.0 (Novembro 2025)
+- ✅ **Sistema de vinculação por concurso**: Apostas agora são vinculadas automaticamente ao próximo concurso
+- ✅ **Conferência inteligente**: Botão de conferir só é habilitado após o resultado do concurso vinculado
+- ✅ **Exibição de concurso nos cards**: Cada aposta mostra o concurso e data de referência
+- ✅ **Funcionalidade Copiar**: Copia todos os 10 jogos para área de transferência em formato texto
+- ✅ **Funcionalidade Exportar**: Exporta jogos em arquivo .txt com nome personalizado (estratégia + data)
+- ✅ **Busca dinâmica**: Removido concurso hardcoded, sistema sempre busca o último resultado disponível
+- ✅ **Melhorias na UX**: Feedback visual aprimorado e alertas mais informativos
 
 ### Versão 2.0.0 (Novembro 2025)
 - ✅ 12 estratégias inteligentes implementadas
