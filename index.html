@@ -183,71 +183,73 @@
         </section>
 
         <!-- Seção histórico de apostas -->
-                <section id="historico" class="mb-12">
-            <div class="bg-white rounded-lg card-shadow p-6">
+        <section id="historico" class="mb-12">
+            <div class="bg-white rounded-lg card-shadow p-6 border border-purple-200">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                    <i class="fas fa-history text-blue-500 mr-3"></i>
+                    <i class="fas fa-history text-purple-500 mr-3"></i>
                     Histórico de Apostas
                 </h2>
 
                 <!-- Cards de Estatísticas -->
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-blue-50 p-4 rounded-lg text-center">
+                    <div class="bg-blue-50 p-4 rounded-lg text-center border border-blue-200">
                         <p class="text-sm text-blue-700">Total de Apostas</p>
                         <p id="totalApostas" class="text-2xl font-bold text-blue-900">0</p>
                     </div>
-                    <div class="bg-green-50 p-4 rounded-lg text-center">
+                    <div class="bg-green-50 p-4 rounded-lg text-center border border-green-200">
                         <p class="text-sm text-green-700">Total em Ganhos</p>
                         <p id="totalGanhos" class="text-2xl font-bold text-green-900">R$ 0,00</p>
                     </div>
-                    <div class="bg-red-50 p-4 rounded-lg text-center">
+                    <div class="bg-red-50 p-4 rounded-lg text-center border border-red-200">
                         <p class="text-sm text-red-700">Total Investido</p>
                         <p id="totalInvestido" class="text-2xl font-bold text-red-900">R$ 0,00</p>
                     </div>
-                    <div class="bg-purple-50 p-4 rounded-lg text-center">
+                    <div class="bg-purple-50 p-4 rounded-lg text-center border border-purple-200">
                         <p class="text-sm text-purple-700">Saldo Geral</p>
                         <p id="saldoGeral" class="text-2xl font-bold text-purple-900">R$ 0,00</p>
                     </div>
                 </div>
 
                 <!-- Filtros e Ações -->
-                <div class="bg-gray-50 rounded-lg p-4 mb-6">
-                    <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                <div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-1">Período</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg">
-                                <option>Todos os períodos</option>
+                            <select id="filtroPeriodo" class="w-full px-3 py-2 border border-gray-300 rounded-lg" title="Filtrar por período">
+                                <option value="todos">Todos os períodos</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-1">Estratégia</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg">
-                                <option>Todas as estratégias</option>
+                            <select id="filtroEstrategia" class="w-full px-3 py-2 border border-gray-300 rounded-lg" title="Filtrar por estratégia">
+                                <option value="todas">Todas as estratégias</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-1">Status</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg">
-                                <option>Todos os status</option>
+                            <select id="filtroStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg" title="Filtrar por status">
+                                <option value="todos">Todos os status</option>
+                                <option value="aguardando">Aguardando</option>
+                                <option value="conferido">Conferido</option>
                             </select>
                         </div>
-                        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                            <button id="atualizarResultados" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
-                                <i class="fas fa-sync-alt mr-2"></i> Atualizar Resultados
-                            </button>
-                            <button id="exportarDados" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
-                                <i class="fas fa-file-excel mr-2"></i> Exportar Dados
-                            </button>
-                            <button id="limparHistorico" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
-                                <i class="fas fa-trash-alt mr-2"></i> Limpar Histórico
-                            </button>
-                        </div>
+                    </div>
+                    <div class="grid sm:grid-cols-3 gap-2 mt-4">
+                        <button id="atualizarResultados" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-sync-alt mr-2"></i> Atualizar Resultados
+                        </button>
+                        <button id="exportarDados" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-file-excel mr-2"></i> Exportar Dados
+                        </button>
+                        <button id="limparHistorico" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-trash-alt mr-2"></i> Limpar Histórico
+                        </button>
                     </div>
                 </div>
 
                 <!-- Lista de Apostas -->
-                <div id="listaApostas" class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Apostas salvas serão inseridas aqui -->
+                <div id="historico-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Apostas salvas serão inseridas aqui pelo app.js -->
                 </div>
             </div>
         </section>

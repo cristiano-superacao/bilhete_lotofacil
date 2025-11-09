@@ -135,6 +135,50 @@ class LotofacilEstrategica {
         this.init();
     }
 
+    // Atualiza o histórico marcando jogos cuja data coincide com o último concurso disponível
+    async atualizarJogos() {
+        try {
+            this.mostrarLoading(true, 'Buscando último resultado da Caixa...');
+            const response = await fetch('https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil/');
+            if (!response.ok) {
+                throw new Error('Não foi possível buscar o último concurso da Caixa.');
+            }
+            const ultimoConcurso = await response.json();
+            if (!ultimoConcurso || !ultimoConcurso.dataApuracao) {
+                throw new Error('Dados do último concurso são inválidos.');
+            }
+
+            const dataSorteio = this.formatarDataBrasil(ultimoConcurso.dataApuracao);
+            
+            let historico = this.carregarHistorico();
+            let jogosAtualizados = 0;
+
+            historico.forEach(aposta => {
+                const dataAposta = this.formatarDataBrasil(aposta.dataGeracao);
+                if (dataAposta === dataSorteio) {
+                    if (!aposta.conferivel) {
+                        aposta.conferivel = true;
+                        jogosAtualizados++;
+                    }
+                }
+            });
+
+            if (jogosAtualizados > 0) {
+                this.salvarHistorico(historico);
+                this.atualizarExibicaoHistorico();
+                this.mostrarAlerta(`✅ ${jogosAtualizados} registro(s) de aposta atualizado(s) e liberado(s) para conferência!`, 'success');
+            } else {
+                this.mostrarAlerta('ℹ️ Nenhum jogo no histórico corresponde à data do último sorteio.', 'info');
+            }
+
+        } catch (error) {
+            console.error('Erro ao atualizar jogos:', error);
+            this.mostrarAlerta('Erro ao buscar resultados da Caixa. Verifique a conexão.', 'error');
+        } finally {
+            this.mostrarLoading(false);
+        }
+    }
+
     jogoJaExiste(jogo, listaJogos) {
         return listaJogos.some(j => JSON.stringify(j) === JSON.stringify(jogo));
     }
@@ -702,7 +746,7 @@ class LotofacilEstrategica {
             }
         });
 
-        // Histórico de apostas
+    // Histórico de apostas
         document.getElementById('salvarJogosHistorico')?.addEventListener('click', () => {
             this.salvarJogosNoHistorico();
         });
@@ -711,8 +755,9 @@ class LotofacilEstrategica {
             this.limparHistorico();
         });
 
+        // Botão para atualizar o status dos jogos no histórico com base no último concurso disponível
         document.getElementById('atualizarResultados')?.addEventListener('click', () => {
-            this.mostrarAlerta('Funcionalidade de conferência de resultados em desenvolvimento.', 'info');
+            this.atualizarJogos();
         });
 
         document.getElementById('exportarDados')?.addEventListener('click', () => {
@@ -1162,6 +1207,75 @@ class LotofacilEstrategica {
         return this.ultimoResultado;
     }
 
+    salvarJogosNoHistorico() {
+        if (this.jogosGerados.length === 0) {
+            this.mostrarAlerta('Nenhum jogo gerado para salvar.', 'warning');
+            return;
+        }
+
+        const estrategiaInfo = this.analises.find(a => a.id === this.estrategiaAtual);
+        if (!estrategiaInfo) {
+            this.mostrarAlerta('Estratégia não encontrada. Não é possível salvar.', 'error');
+            return;
+        }
+
+        const agora = new Date();
+        const dataFormatada = agora.toLocaleDateString('pt-BR');
+        const horaFormatada = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        const dataGeracaoISO = agora.toISOString();
+
+        const novoRegistro = {
+            id: Date.now(),
+            estrategia: estrategiaInfo.titulo,
+            data: dataFormatada,
+            hora: horaFormatada,
+            dataGeracao: dataGeracaoISO, // Adiciona a data em formato ISO para comparações
+            jogos: this.jogosGerados,
+            status: 'não conferido',
+            conferivel: false // Inicia como não conferível
+        };
+
+        this.historico.unshift(novoRegistro); // Adiciona no início do array
+        this.salvarHistorico(this.historico);
+        this.atualizarExibicaoHistorico();
+        this.mostrarAlerta('Jogos salvos no histórico com sucesso!', 'success');
+    }
+
+    carregarHistorico() {
+        try {
+            const historicoSalvo = localStorage.getItem('lotofacil_historico');
+            return historicoSalvo ? JSON.parse(historicoSalvo) : [];
+        } catch (error) {
+            console.error('Erro ao carregar histórico:', error);
+            this.mostrarAlerta('Não foi possível carregar o histórico. O formato pode estar corrompido.', 'error');
+            return [];
+        }
+    }
+
+    exportarHistorico() {
+        if (this.historico.length === 0) {
+            this.mostrarAlerta('Nenhum dado no histórico para exportar.', 'info');
+            return;
+        }
+
+        try {
+            const dadosParaExportar = JSON.stringify(this.historico, null, 2);
+            const blob = new Blob([dadosParaExportar], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `historico_lotofacil_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            this.mostrarAlerta('Histórico exportado com sucesso!', 'success');
+        } catch (error) {
+            console.error('Erro ao exportar histórico:', error);
+            this.mostrarAlerta('Ocorreu um erro ao exportar os dados.', 'error');
+        }
+    }
+
     // Função auxiliar para usar dados simulados (fallback)
     usarDadosSimulados(numero) {
         console.log(`🔄 Usando dados simulados para concurso ${numero}...`);
@@ -1186,103 +1300,250 @@ class LotofacilEstrategica {
                data.listaDezenas.length === 15;
     }
     
-    // Conferir aposta com resultado do concurso
-    conferirApostasDoRegistro(registro, resultadoConcurso) {
-        // Limpar resultados anteriores
-        registro.resultadosConferidos = [];
-        registro.totalPremio = 0;
-        
-        const dezenasAposta = registro.dezenas;
-        const dezenasResultado = resultadoConcurso.dezenas;
-        
-        // Conferir acertos
-        const acertos = dezenasAposta.filter(dezena => dezenasResultado.includes(dezena));
-        const numeroAcertos = acertos.length;
-        
-        // Calcular prêmio baseado na tabela de premiação da Lotofácil
-        if (numeroAcertos >= 15) {
-            // Prêmio principal (15 acertos) - valor fixo ou percentual do total arrecadado
-            registro.premio = 0.2; // Exemplo: 20% do total arrecadado
-        } else if (numeroAcertos >= 11) {
-            // Premiação para 11 a 14 acertos - valor fixo
-            registro.premio = 10; // Exemplo: R$ 10.000,00
-        } else {
-            registro.premio = 0;
+    salvarHistorico(historico) {
+        try {
+            localStorage.setItem('lotofacil_historico', JSON.stringify(historico));
+            this.historico = historico; // Atualiza a propriedade da classe
+        } catch (error) {
+            console.error('Erro ao salvar no histórico:', error);
+            this.mostrarAlerta('Erro ao salvar no histórico!', 'error');
         }
-        
-        // Calcular total do prêmio considerando a quantidade de jogos e o valor do prêmio por jogo
-        registro.totalPremio = registro.quantidadeJogos * registro.premio;
-        
-        // Marcar como conferido
-        registro.resultadosConferidos.push({
-            concurso: resultadoConcurso.concurso,
-            acertos: numeroAcertos,
-            premio: registro.premio
-        });
-        
-        console.log(`Aposta conferida: ${numeroAcertos} acertos`, registro);
     }
-    
-    // Exibir detalhes da aposta no modal
-    verDetalhesAposta(id) {
-        const registro = this.historico.find(r => r.id === id);
-        if (!registro) return;
-        
-        // Criar conteúdo do modal
-        const conteudo = document.createElement('div');
-        conteudo.className = 'p-4';
-        
-        // Título
-        const titulo = document.createElement('h3');
-        titulo.className = 'text-lg font-bold mb-4';
-        titulo.textContent = `Detalhes da Aposta - Concurso ${registro.concurso}`;
-        conteudo.appendChild(titulo);
-        
-        // Informações da aposta
-        const infoAposta = document.createElement('div');
-        infoAposta.className = 'mb-4';
-        infoAposta.innerHTML = `
-            <p><strong>Data:</strong> ${registro.data}</p>
-            <p><strong>Dezenas Apostadas:</strong> ${registro.dezenas.join(', ')}</p>
-            <p><strong>Quantidade de Jogos:</strong> ${registro.quantidadeJogos}</p>
-            <p><strong>Total Apostado:</strong> R$ ${registro.totalApostado.toFixed(2)}</p>
-        `;
-        conteudo.appendChild(infoAposta);
-        
-        // Resultados da conferência
-        const resultadosContainer = document.createElement('div');
-        resultadosContainer.className = 'space-y-2';
-        
-        registro.resultadosConferidos.forEach(resultado => {
-            const resultadoDiv = document.createElement('div');
-            resultadoDiv.className = 'p-3 rounded-lg bg-gray-50 border';
-            resultadoDiv.innerHTML = `
-                <p><strong>Concurso:</strong> ${resultado.concurso}</p>
-                <p><strong>Acertos:</strong> ${resultado.acertos}</p>
-                <p><strong>Prêmio:</strong> R$ ${resultado.premio.toFixed(2)}</p>
+
+    atualizarExibicaoHistorico() {
+        const container = document.getElementById('historico-container');
+        if (!container) return;
+
+        this.historico = this.carregarHistorico(); // Garante que o histórico está atualizado
+
+        // Atualizar estatísticas
+        this.atualizarEstatisticasHistorico();
+
+        if (this.historico.length === 0) {
+            container.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-folder-open text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-xl text-gray-500 mb-2">Nenhuma aposta no histórico.</p>
+                    <p class="text-sm text-gray-400">Gere novos jogos e salve-os para vê-los aqui.</p>
+                </div>
             `;
-            resultadosContainer.appendChild(resultadoDiv);
+            return;
+        }
+
+        container.innerHTML = this.historico.map(aposta => {
+            const podeConferir = aposta.conferivel === true;
+            const statusTexto = aposta.status === 'conferido' ? 'Conferido' : 'Aguardando';
+            const statusCor = aposta.status === 'conferido' ? 'bg-green-500' : 'bg-yellow-500';
+
+            return `
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                    <!-- Cabeçalho do Card -->
+                    <div class="p-4 border-b border-gray-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-gray-800 text-sm">${aposta.estrategia}</h4>
+                            <span class="text-xs font-semibold py-1 px-3 rounded-full text-white ${statusCor}">
+                                ${statusTexto}
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-500">Gerado em: ${aposta.data} às ${aposta.hora}</p>
+                        <p class="text-xs text-gray-600 font-semibold mt-1">${aposta.jogos.length} jogos salvos</p>
+                    </div>
+
+                    <!-- Prévia dos Jogos -->
+                    <div class="p-4 bg-gray-50">
+                        <p class="text-xs text-gray-600 mb-2 font-semibold">Prévia dos jogos:</p>
+                        <div class="flex flex-wrap gap-1 justify-center">
+                            ${aposta.jogos[0].map(num => `<div class="number-ball-sm">${num.toString().padStart(2, '0')}</div>`).join('')}
+                        </div>
+                        ${aposta.jogos.length > 1 ? `<p class="text-xs text-gray-500 text-center mt-2">(+ ${aposta.jogos.length - 1} jogos)</p>` : ''}
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="p-3 grid grid-cols-3 gap-2">
+                        <button 
+                            onclick="lotofacil.conferirAposta(${aposta.id})"
+                            class="px-3 py-2 rounded text-white text-xs font-semibold transition-colors ${podeConferir ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-400 cursor-not-allowed'}"
+                            ${!podeConferir ? `disabled title="Clique em 'Atualizar Resultados' para verificar se há resultados disponíveis para conferência"` : 'title="Conferir resultado desta aposta"'}
+                        >
+                            <i class="fas fa-check-circle mr-1"></i> Conferir
+                        </button>
+                        <button 
+                            onclick="lotofacil.verDetalhesAposta(${aposta.id})"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-xs font-semibold transition-colors"
+                            title="Ver todos os jogos salvos"
+                        >
+                            <i class="fas fa-eye mr-1"></i> Ver Todos
+                        </button>
+                        <button 
+                            onclick="lotofacil.removerAposta(${aposta.id})"
+                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-xs font-semibold transition-colors"
+                            title="Remover esta aposta"
+                        >
+                            <i class="fas fa-trash-alt mr-1"></i> Remover
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    atualizarEstatisticasHistorico() {
+        const totalApostasEl = document.getElementById('totalApostas');
+        const totalGanhosEl = document.getElementById('totalGanhos');
+        const totalInvestidoEl = document.getElementById('totalInvestido');
+        const saldoGeralEl = document.getElementById('saldoGeral');
+
+        if (!totalApostasEl || !totalGanhosEl || !totalInvestidoEl || !saldoGeralEl) return;
+
+        const totalApostas = this.historico.length;
+        let totalGanhos = 0;
+        let totalInvestido = this.historico.reduce((acc, aposta) => acc + (aposta.jogos.length * 3), 0); // R$ 3,00 por jogo
+
+        // Calcular ganhos baseados nos resultados conferidos
+        this.historico.forEach(aposta => {
+            if (aposta.resultadoConferencia && aposta.resultadoConferencia.todosOsResultados) {
+                aposta.resultadoConferencia.todosOsResultados.forEach(resultado => {
+                    const acertos = resultado.acertos;
+                    if (acertos === 11) totalGanhos += 6;
+                    else if (acertos === 12) totalGanhos += 12;
+                    else if (acertos === 13) totalGanhos += 30;
+                    else if (acertos === 14) totalGanhos += 0; // Valor variável, não calculado
+                    else if (acertos === 15) totalGanhos += 0; // Valor variável, não calculado
+                });
+            }
         });
+
+        const saldoGeral = totalGanhos - totalInvestido;
+
+        totalApostasEl.textContent = totalApostas;
+        totalGanhosEl.textContent = `R$ ${totalGanhos.toFixed(2).replace('.', ',')}`;
+        totalInvestidoEl.textContent = `R$ ${totalInvestido.toFixed(2).replace('.', ',')}`;
+        saldoGeralEl.textContent = `R$ ${saldoGeral.toFixed(2).replace('.', ',')}`;
         
-        conteudo.appendChild(resultadosContainer);
-        
-        // Botão de fechar
-        const btnFechar = document.createElement('button');
-        btnFechar.className = 'mt-4 bg-red-500 text-white px-4 py-2 rounded-lg';
-        btnFechar.textContent = 'Fechar';
-        btnFechar.addEventListener('click', () => {
-            modal.remove();
+        // Mudar cor do saldo se for negativo
+        if (saldoGeral < 0) {
+            saldoGeralEl.classList.remove('text-purple-900');
+            saldoGeralEl.classList.add('text-red-900');
+        } else {
+            saldoGeralEl.classList.remove('text-red-900');
+            saldoGeralEl.classList.add('text-purple-900');
+        }
+    }
+
+    async conferirAposta(id) {
+        const aposta = this.historico.find(r => r.id === id);
+        if (!aposta) {
+            this.mostrarAlerta('Aposta não encontrada no histórico.', 'error');
+            return;
+        }
+
+        // Usa o último resultado carregado na aplicação (seja manual ou automático)
+        const resultadoParaConferencia = this.ultimoResultado;
+
+        if (!resultadoParaConferencia || !resultadoParaConferencia.dezenas) {
+            this.mostrarAlerta('Nenhum resultado de concurso carregado para conferir. Por favor, insira ou busque um resultado primeiro.', 'warning');
+            return;
+        }
+
+        this.mostrarLoading(true, `Conferindo aposta com o concurso ${resultadoParaConferencia.concurso}...`);
+
+        let totalAcertosMax = 0;
+        let melhorJogo = null;
+        let todosOsResultados = [];
+
+        aposta.jogos.forEach((jogo, index) => {
+            const acertos = jogo.filter(dezena => resultadoParaConferencia.dezenas.includes(dezena.toString().padStart(2, '0')));
+            const numeroAcertos = acertos.length;
+
+            todosOsResultados.push({ jogo: index + 1, acertos: numeroAcertos, numeros: acertos });
+
+            if (numeroAcertos > totalAcertosMax) {
+                totalAcertosMax = numeroAcertos;
+                melhorJogo = jogo;
+            }
         });
-        conteudo.appendChild(btnFechar);
-        
-        // Criar modal
+
+        // Atualiza o status da aposta
+        aposta.status = 'conferido';
+        aposta.resultadoConferencia = {
+            concurso: resultadoParaConferencia.concurso,
+            data: resultadoParaConferencia.data,
+            dezenasSorteadas: resultadoParaConferencia.dezenas,
+            melhorResultado: {
+                acertos: totalAcertosMax,
+                jogo: melhorJogo
+            },
+            todosOsResultados: todosOsResultados
+        };
+
+        this.salvarHistorico(this.historico);
+        this.atualizarExibicaoHistorico();
+        this.mostrarLoading(false);
+
+        // Exibe o resultado em um modal
+        this.exibirModalResultadoConferencia(aposta);
+    }
+
+    exibirModalResultadoConferencia(aposta) {
+        const { concurso, data, dezenasSorteadas, melhorResultado } = aposta.resultadoConferencia;
+        const premiacao = {
+            11: 'R$ 6,00',
+            12: 'R$ 12,00',
+            13: 'R$ 30,00',
+            14: 'Variável',
+            15: 'Variável (Prêmio Máximo)'
+        };
+        const premio = premiacao[melhorResultado.acertos] || 'Nenhum';
+
         const modal = document.createElement('div');
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center';
-        modal.appendChild(conteudo);
-        
+        modal.className = 'fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full p-6 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto" id="modal-conferencia">
+                <div class="flex items-center justify-between mb-4 border-b pb-3">
+                    <h3 class="text-2xl font-bold text-gray-800">Resultado da Conferência</h3>
+                    <button class="text-gray-500 hover:text-gray-800 text-2xl" onclick="this.closest('.fixed').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600">Concurso: <strong class="text-lg text-gray-900">${concurso}</strong></p>
+                        <p class="text-sm text-gray-600">Data do Sorteio: <strong class="text-lg text-gray-900">${data}</strong></p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Dezenas Sorteadas:</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${dezenasSorteadas.map(d => `<div class="number-ball number-ball-result">${d}</div>`).join('')}
+                        </div>
+                    </div>
+                    <hr>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Seu Melhor Resultado (${aposta.jogos.length} jogos conferidos):</h4>
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                            <p class="text-xl font-bold text-blue-800">${melhorResultado.acertos} Acertos</p>
+                            <p class="font-semibold text-blue-700">Prêmio Estimado: ${premio}</p>
+                            <div class="flex flex-wrap gap-2 mt-3">
+                                ${melhorResultado.jogo.map(num => {
+                                    const acertou = dezenasSorteadas.includes(num.toString().padStart(2, '0'));
+                                    return `<div class="number-ball ${acertou ? 'bg-green-500 text-white' : 'bg-gray-200'}">${num.toString().padStart(2, '0')}</div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 text-right">
+                    <button class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors" 
+                            onclick="this.closest('.fixed').remove()">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        `;
         document.body.appendChild(modal);
-        
-        // Fechar modal ao clicar fora dele
+        setTimeout(() => {
+            document.getElementById('modal-conferencia').classList.remove('scale-95');
+        }, 10);
+
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.remove();
@@ -1290,65 +1551,64 @@ class LotofacilEstrategica {
         });
     }
 
-    async conferirAposta(id) {
-        const registro = this.historico.find(r => r.id === id);
-        if (!registro) return;
-
-        // Pegar o número do concurso digitado pelo usuário
-        const concursoInput = document.getElementById('concurso');
-        const numeroConcurso = concursoInput.value.trim();
-        
-        if (!numeroConcurso) {
-            this.mostrarAlerta('Por favor, digite o número do concurso para conferir a aposta.', 'warning');
-            concursoInput.focus();
-            return;
-        }
-
-        // Buscar resultado do concurso específico
-        try {
-            this.mostrarLoading(true, 'Buscando resultado do concurso...');
-            const resultadoConcurso = await this.buscarConcursoEspecifico(numeroConcurso);
-            
-            if (!resultadoConcurso) {
-                // O alerta de erro já é mostrado dentro de buscarConcursoEspecifico
-                return;
-            }
-
-            // Conferir a aposta com o resultado do concurso específico
-            this.conferirApostasDoRegistro(registro, resultadoConcurso);
-            this.salvarHistorico();
-            this.exibirHistorico();
-            this.atualizarEstatisticas();
-
-            if (registro.totalPremio > 0) {
-                this.mostrarAlerta(`Parabéns! Você ganhou R$ ${registro.totalPremio.toFixed(2)} no concurso ${numeroConcurso}!`, 'success');
-            } else {
-                this.mostrarAlerta(`Aposta conferida no concurso ${numeroConcurso}. Desta vez não foi premiada.`, 'info');
-            }
-
-        } catch (error) {
-            console.error('Erro ao buscar resultado do concurso:', error);
-            this.mostrarAlerta('Erro ao buscar resultado do concurso. Tente novamente.', 'error');
-        } finally {
-            this.mostrarLoading(false);
-        }
-    }
-
     removerAposta(id) {
         this.mostrarAlertaComConfirmacao('Tem certeza que deseja remover esta aposta do histórico?', () => {
             this.historico = this.historico.filter(r => r.id !== id);
-            this.salvarHistorico();
-            this.exibirHistorico();
+            this.salvarHistorico(this.historico);
+            this.atualizarExibicaoHistorico();
             this.mostrarAlerta('Aposta removida do histórico.', 'success');
         });
+    }
+
+    verDetalhesAposta(id) {
+        const aposta = this.historico.find(r => r.id === id);
+        if (!aposta) return;
+
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full p-6 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto" id="modal-detalhes">
+                <div class="flex items-center justify-between mb-4 border-b pb-3">
+                    <h3 class="text-2xl font-bold text-gray-800">Detalhes da Aposta</h3>
+                    <button class="text-gray-500 hover:text-gray-800 text-2xl" onclick="this.closest('.fixed').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <p><strong>Estratégia:</strong> ${aposta.estrategia}</p>
+                    <p><strong>Data:</strong> ${aposta.data} às ${aposta.hora}</p>
+                    <p><strong>Total de Jogos:</strong> ${aposta.jogos.length}</p>
+                    <div class="space-y-3">
+                        <h4 class="font-semibold">Jogos Salvos:</h4>
+                        ${aposta.jogos.map((jogo, index) => `
+                            <div class="flex items-center gap-3 bg-gray-50 p-2 rounded">
+                                <span class="font-bold text-gray-600">${index + 1}:</span>
+                                <div class="flex flex-wrap gap-1">
+                                    ${jogo.map(num => `<div class="number-ball-sm">${num.toString().padStart(2, '0')}</div>`).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                 <div class="mt-6 text-right">
+                    <button class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors" 
+                            onclick="this.closest('.fixed').remove()">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        setTimeout(() => {
+            document.getElementById('modal-detalhes').classList.remove('scale-95');
+        }, 10);
     }
 
     limparHistorico() {
         this.mostrarAlertaComConfirmacao('Tem certeza que deseja limpar todo o histórico de apostas? Esta ação não pode ser desfeita.', () => {
             this.historico = [];
-            this.salvarHistorico();
-            this.exibirHistorico();
-            this.atualizarEstatisticas();
+            this.salvarHistorico(this.historico);
+            this.atualizarExibicaoHistorico();
             this.mostrarAlerta('Histórico de apostas limpo com sucesso.', 'success');
         });
     }
@@ -1464,674 +1724,9 @@ class LotofacilEstrategica {
         }, 500);
     }
 
-    // Funcionalidades do Histórico
-    salvarJogosNoHistorico() {
-        if (!this.jogosGerados || this.jogosGerados.length === 0) {
-            this.mostrarAlerta('Nenhum jogo foi gerado para salvar no histórico!', 'warning');
-            return;
-        }
-
-        if (!this.estrategiaAtual) {
-            this.mostrarAlerta('Nenhuma estratégia selecionada!', 'error');
-            return;
-        }
-
-        const estrategia = this.analises.find(a => a.id === this.estrategiaAtual);
-        const agora = new Date();
-
-        const registro = {
-            id: Date.now(),
-            data: agora.toLocaleDateString('pt-BR'),
-            hora: agora.toLocaleTimeString('pt-BR'),
-            estrategia: estrategia ? estrategia.titulo : 'Estratégia Desconhecida',
-            estrategiaId: this.estrategiaAtual,
-            jogos: [...this.jogosGerados],
-            quantidadeJogos: this.jogosGerados.length,
-            concursoReferencia: this.ultimoResultado ? this.ultimoResultado.concurso : null,
-            status: 'aguardando'
-        };
-
-        let historico = this.carregarHistorico();
-        historico.unshift(registro);
-
-        if (historico.length > 50) {
-            historico = historico.slice(0, 50);
-        }
-
-        this.salvarHistorico(historico);
-        this.mostrarAlerta(`✅ ${this.jogosGerados.length} jogos salvos no histórico!`, 'success');
-        this.atualizarExibicaoHistorico();
-    }
-
-    carregarHistorico() {
-        try {
-            const historicoSalvo = localStorage.getItem('lotofacil_historico');
-            return historicoSalvo ? JSON.parse(historicoSalvo) : [];
-        } catch (error) {
-            console.warn('Erro ao carregar histórico:', error);
-            return [];
-        }
-    }
-
-    salvarHistorico(historico) {
-        try {
-            localStorage.setItem('lotofacil_historico', JSON.stringify(historico));
-        } catch (error) {
-            console.error('Erro ao salvar no histórico:', error);
-            this.mostrarAlerta('Erro ao salvar no histórico!', 'error');
-        }
-    }
-
-    limparHistorico() {
-        this.mostrarAlertaComConfirmacao('Tem certeza que deseja limpar todo o histórico? Esta ação não pode ser desfeita.', () => {
-            this.salvarHistorico([]);
-            this.mostrarAlerta('Histórico limpo com sucesso!', 'success');
-            this.atualizarExibicaoHistorico();
-        });
-    }
-
-    atualizarExibicaoHistorico() {
-        const container = document.getElementById('listaApostas');
-        if (!container) return;
-
-        const historico = this.carregarHistorico();
-        container.innerHTML = '';
-
-        if (historico.length === 0) {
-            container.innerHTML = `
-                <div class="col-span-1 lg:col-span-4 text-center text-gray-500 py-8">
-                    <i class="fas fa-history text-4xl mb-4 opacity-50"></i>
-                    <p>Nenhuma aposta no histórico ainda.</p>
-                    <p class="text-sm">Gere alguns jogos e salve-os para acompanhar!</p>
-                </div>
-            `;
-            this.atualizarEstatisticasHistorico(historico);
-            return;
-        }
-
-        historico.forEach(registro => {
-            const card = document.createElement('div');
-            card.className = 'bg-white border rounded-lg p-4 shadow-sm transition-all hover:shadow-md';
-            
-            // Calcular informações de conferência se houver
-            let infoConferencia = '';
-            if (registro.resultadoConferencia) {
-                const totalGanho = registro.resultadoConferencia.totalGanho || 0;
-                const melhorJogo = registro.resultadoConferencia.melhorJogo || { acertos: 0 };
-                
-                infoConferencia = `
-                    <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-semibold text-green-800">Resultado da Conferência</span>
-                            <span class="text-xs text-green-600">Concurso ${registro.resultadoConferencia.concurso}</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div>
-                                <span class="text-gray-600">Melhor Jogo:</span>
-                                <span class="font-bold text-green-700 ml-1">${melhorJogo.acertos} acertos</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-600">Total Ganho:</span>
-                                <span class="font-bold text-green-700 ml-1">R$ ${totalGanho.toFixed(2)}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            card.innerHTML = `
-                <div class="flex justify-between items-start mb-3">
-                    <div>
-                        <h4 class="font-semibold text-gray-800">${registro.estrategia}</h4>
-                        <p class="text-sm text-gray-500">${registro.data} às ${registro.hora}</p>
-                        <p class="text-xs text-blue-600 font-medium">${registro.quantidadeJogos} jogos salvos</p>
-                    </div>
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full ${registro.status === 'conferido' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
-                        ${registro.status === 'conferido' ? 'Conferido' : 'Aguardando'}
-                    </span>
-                </div>
-                
-                <div class="mb-4 border-t pt-3">
-                    <div class="text-xs text-gray-600 mb-2">Prévia dos jogos:</div>
-                    <div class="flex flex-wrap gap-1">
-                        ${registro.jogos[0].map(n => `<div class="number-ball-sm">${n.toString().padStart(2, '0')}</div>`).join('')}
-                    </div>
-                    ${registro.jogos.length > 1 ? `<div class="text-xs text-gray-400 mt-2">+ ${registro.jogos.length - 1} outros jogos</div>` : ''}
-                </div>
-
-                ${infoConferencia}
-
-                <div class="flex gap-2 mt-3">
-                    <button onclick="lotofacil.conferirAposta(${registro.id})" 
-                            class="flex-1 text-xs bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600 transition-colors">
-                        <i class="fas fa-check-circle mr-1"></i> Conferir
-                    </button>
-                    <button onclick="lotofacil.verDetalhesHistorico(${registro.id})" 
-                            class="flex-1 text-xs bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-colors">
-                        <i class="fas fa-eye mr-1"></i> Ver Todos
-                    </button>
-                    <button onclick="lotofacil.removerDoHistorico(${registro.id})" 
-                            class="text-xs bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition-colors">
-                        <i class="fas fa-trash-alt mr-1"></i> Remover
-                    </button>
-                </div>
-            `;
-
-            container.appendChild(card);
-        });
-
-        this.atualizarEstatisticasHistorico(historico);
-    }
-
-    atualizarEstatisticasHistorico(historico) {
-        const totalApostas = historico.length;
-        const totalJogos = historico.reduce((acc, r) => acc + r.quantidadeJogos, 0);
-        const totalInvestido = totalJogos * 3.00; // Custo de R$ 3,00 por jogo
-        
-        // Calcular ganhos totais
-        const totalGanhos = historico.reduce((acc, r) => {
-            return acc + (r.resultadoConferencia?.totalGanho || 0);
-        }, 0);
-        
-        const saldoGeral = totalGanhos - totalInvestido;
-
-        document.getElementById('totalApostas').textContent = totalApostas;
-        document.getElementById('totalInvestido').textContent = `R$ ${totalInvestido.toFixed(2)}`;
-        document.getElementById('totalGanhos').textContent = `R$ ${totalGanhos.toFixed(2)}`;
-        document.getElementById('saldoGeral').textContent = `R$ ${saldoGeral.toFixed(2)}`;
-        
-        // Colorir saldo conforme positivo/negativo
-        const saldoElement = document.getElementById('saldoGeral');
-        if (saldoElement) {
-            if (saldoGeral > 0) {
-                saldoElement.classList.remove('text-red-900');
-                saldoElement.classList.add('text-green-900');
-            } else if (saldoGeral < 0) {
-                saldoElement.classList.remove('text-green-900');
-                saldoElement.classList.add('text-red-900');
-            }
-        }
-    }
-
-    async conferirAposta(id) {
-        const historico = this.carregarHistorico();
-        const registro = historico.find(r => r.id === id);
-        
-        if (!registro) {
-            this.mostrarAlerta('Registro não encontrado!', 'error');
-            return;
-        }
-
-        // Verificar se já foi conferido
-        if (registro.status === 'conferido') {
-            this.mostrarAlerta('Esta aposta já foi conferida anteriormente.', 'info');
-            this.verDetalhesConferencia(registro);
-            return;
-        }
-
-        try {
-            this.mostrarLoading(true, 'Buscando resultado do último concurso...');
-            
-            // Buscar o último resultado disponível
-            const response = await fetch('https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil/');
-            
-            if (!response.ok) {
-                throw new Error('Não foi possível buscar o resultado');
-            }
-            
-            const data = await response.json();
-            
-            if (!data || !data.listaDezenas || data.listaDezenas.length !== 15) {
-                throw new Error('Dados do resultado inválidos');
-            }
-
-            // Verificar se o concurso já foi sorteado após a data de criação da aposta
-            const dataConcurso = new Date(data.dataApuracao);
-            const dataAposta = new Date(registro.data.split('/').reverse().join('-') + 'T' + registro.hora);
-            
-            if (dataConcurso <= dataAposta) {
-                this.mostrarAlerta(
-                    `Ainda não é possível conferir esta aposta.\n\n` +
-                    `A aposta foi gerada em ${registro.data} às ${registro.hora}.\n` +
-                    `O último concurso disponível (${data.numero}) foi sorteado em ${this.formatarDataBrasil(data.dataApuracao)}.\n\n` +
-                    `Aguarde o próximo sorteio para conferir seus jogos.`,
-                    'warning'
-                );
-                this.mostrarLoading(false);
-                return;
-            }
-            
-            const resultadoSorteio = data.listaDezenas.map(n => parseInt(n));
-            const concursoNumero = data.numero;
-            
-            console.log('🎯 Conferindo aposta contra concurso:', concursoNumero);
-            console.log('🎱 Números sorteados:', resultadoSorteio);
-            
-            // Conferir cada jogo
-            const jogosConferidos = registro.jogos.map((jogo, index) => {
-                const acertos = jogo.filter(num => resultadoSorteio.includes(num)).length;
-                
-                // Calcular prêmio baseado nos acertos (valores aproximados)
-                let premio = 0;
-                if (acertos === 15) {
-                    premio = 398110.55; // 15 acertos
-                } else if (acertos === 14) {
-                    premio = 1703.57; // 14 acertos
-                } else if (acertos === 13) {
-                    premio = 35.00; // 13 acertos
-                } else if (acertos === 12) {
-                    premio = 14.00; // 12 acertos
-                } else if (acertos === 11) {
-                    premio = 7.00; // 11 acertos
-                }
-                
-                return {
-                    jogo,
-                    acertos,
-                    premio,
-                    numerosSorteados: resultadoSorteio
-                };
-            });
-            
-            // Calcular estatísticas
-            const melhorJogo = jogosConferidos.reduce((melhor, atual) => 
-                atual.acertos > melhor.acertos ? atual : melhor
-            , jogosConferidos[0]);
-            
-            const totalGanho = jogosConferidos.reduce((total, j) => total + j.premio, 0);
-            const totalInvestido = registro.quantidadeJogos * 3.00;
-            const lucro = totalGanho - totalInvestido;
-            
-            // Distribuição de acertos
-            const distribuicaoAcertos = {};
-            jogosConferidos.forEach(j => {
-                distribuicaoAcertos[j.acertos] = (distribuicaoAcertos[j.acertos] || 0) + 1;
-            });
-            
-            // Atualizar registro com resultado da conferência
-            registro.status = 'conferido';
-            registro.resultadoConferencia = {
-                concurso: concursoNumero,
-                dataConferencia: new Date().toLocaleString('pt-BR'),
-                numerossorteados: resultadoSorteio,
-                jogosConferidos,
-                melhorJogo: {
-                    acertos: melhorJogo.acertos,
-                    premio: melhorJogo.premio,
-                    jogo: melhorJogo.jogo
-                },
-                distribuicaoAcertos,
-                totalGanho,
-                totalInvestido,
-                lucro
-            };
-            
-            // Salvar histórico atualizado
-            const historicoAtualizado = historico.map(r => r.id === id ? registro : r);
-            this.salvarHistorico(historicoAtualizado);
-            
-            // Atualizar exibição
-            this.atualizarExibicaoHistorico();
-            
-            // Atualizar análises de performance
-            this.atualizarAnalisePerformance();
-            
-            // Mostrar resultado
-            let mensagem = `✅ Conferência concluída com sucesso!\n\n`;
-            mensagem += `📊 Concurso: ${concursoNumero}\n`;
-            mensagem += `🎯 Melhor jogo: ${melhorJogo.acertos} acertos\n`;
-            mensagem += `💰 Total ganho: R$ ${totalGanho.toFixed(2)}\n`;
-            mensagem += `💳 Investido: R$ ${totalInvestido.toFixed(2)}\n`;
-            mensagem += `${lucro >= 0 ? '📈 Lucro' : '📉 Prejuízo'}: R$ ${Math.abs(lucro).toFixed(2)}`;
-            
-            if (totalGanho > 0) {
-                this.mostrarAlerta(mensagem, 'success');
-            } else {
-                this.mostrarAlerta(mensagem, 'info');
-            }
-            
-        } catch (error) {
-            console.error('❌ Erro ao conferir aposta:', error);
-            this.mostrarAlerta('Erro ao buscar resultado. Verifique sua conexão e tente novamente.', 'error');
-        } finally {
-            this.mostrarLoading(false);
-        }
-    }
-
-    exportarHistorico() {
-        const historico = this.carregarHistorico();
-        if (historico.length === 0) {
-            this.mostrarAlerta('Não há dados no histórico para exportar.', 'info');
-            return;
-        }
-
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "ID,Data,Hora,Estrategia,Qtd Jogos,Status,Jogos\n";
-
-        historico.forEach(registro => {
-            const jogosStr = registro.jogos.map(jogo => `"${jogo.join(' ')}"`).join('; ');
-            const linha = [
-                registro.id,
-                registro.data,
-                registro.hora,
-                `"${registro.estrategia}"`,
-                registro.quantidadeJogos,
-                registro.status,
-                `"${jogosStr}"`
-            ].join(',');
-            csvContent += linha + "\n";
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "historico_lotofacil_estrategica.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        this.mostrarAlerta('Histórico exportado como CSV!', 'success');
-    }
-
-    verDetalhesHistorico(id) {
-        const historico = this.carregarHistorico();
-        const registro = historico.find(r => r.id === id);
-        if (!registro) return;
-
-        const modal = document.createElement('div');
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.remove();
-        });
-
-        modal.innerHTML = `
-            <div class="bg-white rounded-lg max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-800">${registro.estrategia}</h3>
-                        <p class="text-sm text-gray-500">${registro.data} - ${registro.quantidadeJogos} jogos</p>
-                    </div>
-                    <button class="text-gray-500 hover:text-gray-700 text-2xl" onclick="this.closest('.fixed').remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-4">
-                    ${registro.jogos.map((jogo, index) => `
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="font-semibold text-gray-700">Jogo ${index + 1}</span>
-                                <span class="text-xs text-gray-500">${jogo.length} números</span>
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                ${jogo.map(num => `<span class="number-ball number-ball-game">${num.toString().padStart(2, '0')}</span>`).join('')}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-
-                <div class="mt-6 flex justify-end gap-3">
-                    <button class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" 
-                            onclick="this.closest('.fixed').remove()">
-                        Fechar
-                    </button>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(modal);
-    }
-
-    removerDoHistorico(id) {
-        this.mostrarAlertaComConfirmacao('Tem certeza que deseja remover este registro do histórico?', () => {
-            let historico = this.carregarHistorico();
-            historico = historico.filter(r => r.id !== id);
-            this.salvarHistorico(historico);
-            
-            this.mostrarAlerta('Registro removido do histórico!', 'success');
-            this.atualizarExibicaoHistorico();
-        });
-    }
-
-    atualizarAnalisePerformance() {
-        const historico = this.carregarHistorico();
-        const apostasConferidas = historico.filter(r => r.status === 'conferido');
-        
-        if (apostasConferidas.length === 0) {
-            console.log('Nenhuma aposta conferida para análise');
-            return;
-        }
-
-        // Análise por estratégia
-        const porEstrategia = {};
-        apostasConferidas.forEach(aposta => {
-            const nome = aposta.estrategia;
-            if (!porEstrategia[nome]) {
-                porEstrategia[nome] = {
-                    nome,
-                    totalApostas: 0,
-                    totalGanho: 0,
-                    totalInvestido: 0,
-                    melhorAcerto: 0
-                };
-            }
-            porEstrategia[nome].totalApostas++;
-            porEstrategia[nome].totalGanho += aposta.resultadoConferencia.totalGanho;
-            porEstrategia[nome].totalInvestido += aposta.resultadoConferencia.totalInvestido;
-            porEstrategia[nome].melhorAcerto = Math.max(
-                porEstrategia[nome].melhorAcerto,
-                aposta.resultadoConferencia.melhorJogo.acertos
-            );
-        });
-
-        // Atualizar gráfico de distribuição de apostas
-        this.atualizarGraficoDistribuicao(porEstrategia);
-        
-        // Atualizar gráfico de performance financeira
-        this.atualizarGraficoPerformance(apostasConferidas);
-        
-        // Atualizar estatísticas detalhadas
-        this.atualizarEstatisticasDetalhadas(apostasConferidas, porEstrategia);
-    }
-
-    atualizarGraficoDistribuicao(porEstrategia) {
-        const container = document.querySelector('#performance .grid');
-        if (!container) return;
-
-        const distribuicaoDiv = container.querySelector('.bg-white');
-        if (!distribuicaoDiv) return;
-
-        const estrategias = Object.values(porEstrategia);
-        const totalApostas = estrategias.reduce((sum, e) => sum + e.totalApostas, 0);
-
-        let html = `
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Distribuição de Apostas</h3>
-            <div class="space-y-3">
-        `;
-
-        estrategias.forEach(estrategia => {
-            const percentual = ((estrategia.totalApostas / totalApostas) * 100).toFixed(1);
-            const lucro = estrategia.totalGanho - estrategia.totalInvestido;
-            const corBarra = lucro >= 0 ? 'bg-green-500' : 'bg-red-500';
-            
-            html += `
-                <div>
-                    <div class="flex justify-between text-sm mb-1">
-                        <span class="font-medium text-gray-700">${estrategia.nome}</span>
-                        <span class="text-gray-600">${estrategia.totalApostas} (${percentual}%)</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="${corBarra} h-2 rounded-full transition-all duration-500" style="width: ${percentual}%"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Melhor: ${estrategia.melhorAcerto} acertos</span>
-                        <span class="${lucro >= 0 ? 'text-green-600' : 'text-red-600'} font-semibold">
-                            ${lucro >= 0 ? '+' : ''}R$ ${lucro.toFixed(2)}
-                        </span>
-                    </div>
-                </div>
-            `;
-        });
-
-        html += '</div>';
-        distribuicaoDiv.innerHTML = html;
-    }
-
-    atualizarGraficoPerformance(apostasConferidas) {
-        const container = document.querySelector('#performance .grid');
-        if (!container || container.children.length < 2) return;
-
-        const performanceDiv = container.children[1];
-        if (!performanceDiv) return;
-
-        const dados = apostasConferidas.map(aposta => ({
-            data: aposta.data,
-            ganho: aposta.resultadoConferencia.totalGanho,
-            investido: aposta.resultadoConferencia.totalInvestido,
-            lucro: aposta.resultadoConferencia.lucro
-        }));
-
-        const totalGanho = dados.reduce((sum, d) => sum + d.ganho, 0);
-        const totalInvestido = dados.reduce((sum, d) => sum + d.investido, 0);
-        const lucroTotal = totalGanho - totalInvestido;
-        const roi = totalInvestido > 0 ? ((lucroTotal / totalInvestido) * 100) : 0;
-
-        let html = `
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Performance Financeira</h3>
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div class="bg-blue-50 p-3 rounded-lg">
-                    <p class="text-xs text-blue-600 font-medium">Total Investido</p>
-                    <p class="text-xl font-bold text-blue-900">R$ ${totalInvestido.toFixed(2)}</p>
-                </div>
-                <div class="bg-green-50 p-3 rounded-lg">
-                    <p class="text-xs text-green-600 font-medium">Total Ganho</p>
-                    <p class="text-xl font-bold text-green-900">R$ ${totalGanho.toFixed(2)}</p>
-                </div>
-                <div class="${lucroTotal >= 0 ? 'bg-green-50' : 'bg-red-50'} p-3 rounded-lg">
-                    <p class="text-xs ${lucroTotal >= 0 ? 'text-green-600' : 'text-red-600'} font-medium">Lucro/Prejuízo</p>
-                    <p class="text-xl font-bold ${lucroTotal >= 0 ? 'text-green-900' : 'text-red-900'}">
-                        ${lucroTotal >= 0 ? '+' : ''}R$ ${lucroTotal.toFixed(2)}
-                    </p>
-                </div>
-                <div class="${roi >= 0 ? 'bg-purple-50' : 'bg-orange-50'} p-3 rounded-lg">
-                    <p class="text-xs ${roi >= 0 ? 'text-purple-600' : 'text-orange-600'} font-medium">ROI</p>
-                    <p class="text-xl font-bold ${roi >= 0 ? 'text-purple-900' : 'text-orange-900'}">
-                        ${roi >= 0 ? '+' : ''}${roi.toFixed(1)}%
-                    </p>
-                </div>
-            </div>
-            <div class="space-y-2">
-                <p class="text-xs text-gray-600 font-medium">Evolução (últimas ${Math.min(dados.length, 10)} apostas)</p>
-                ${dados.slice(-10).map((d, i) => `
-                    <div class="flex items-center gap-2">
-                        <div class="text-xs text-gray-500 w-16">${d.data}</div>
-                        <div class="flex-1 bg-gray-200 rounded-full h-2">
-                            <div class="${d.lucro >= 0 ? 'bg-green-500' : 'bg-red-500'} h-2 rounded-full" 
-                                 style="width: ${Math.min(Math.abs(d.lucro / totalInvestido) * 100, 100)}%"></div>
-                        </div>
-                        <div class="text-xs ${d.lucro >= 0 ? 'text-green-600' : 'text-red-600'} font-medium w-20 text-right">
-                            ${d.lucro >= 0 ? '+' : ''}${d.lucro.toFixed(2)}
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-
-        performanceDiv.innerHTML = html;
-    }
-
-    atualizarEstatisticasDetalhadas(apostasConferidas, porEstrategia) {
-        // Calcular estatísticas gerais
-        const totalJogos = apostasConferidas.reduce((sum, a) => sum + a.quantidadeJogos, 0);
-        const totalAcertos = {};
-        let maiorAcerto = 0;
-        let menorAcerto = 15;
-        
-        apostasConferidas.forEach(aposta => {
-            Object.entries(aposta.resultadoConferencia.distribuicaoAcertos || {}).forEach(([acertos, quantidade]) => {
-                totalAcertos[acertos] = (totalAcertos[acertos] || 0) + quantidade;
-                const numAcertos = parseInt(acertos);
-                maiorAcerto = Math.max(maiorAcerto, numAcertos);
-                menorAcerto = Math.min(menorAcerto, numAcertos);
-            });
-        });
-
-        const melhorEstrategia = Object.values(porEstrategia).reduce((melhor, atual) => {
-            const lucroMelhor = melhor.totalGanho - melhor.totalInvestido;
-            const lucroAtual = atual.totalGanho - atual.totalInvestido;
-            return lucroAtual > lucroMelhor ? atual : melhor;
-        });
-
-        const piorEstrategia = Object.values(porEstrategia).reduce((pior, atual) => {
-            const lucroPior = pior.totalGanho - pior.totalInvestido;
-            const lucroAtual = atual.totalGanho - atual.totalInvestido;
-            return lucroAtual < lucroPior ? atual : pior;
-        });
-
-        // Atualizar cards de estatísticas
-        const statsContainer = document.querySelector('#estatisticas-detalhadas .grid');
-        if (!statsContainer) return;
-
-        const stats = [
-            { label: '11 acertos', valor: totalAcertos[11] || 0 },
-            { label: '12 acertos', valor: totalAcertos[12] || 0 },
-            { label: '13 acertos', valor: totalAcertos[13] || 0 },
-            { label: '14 acertos', valor: totalAcertos[14] || 0 },
-            { label: '15 acertos', valor: totalAcertos[15] || 0 }
-        ];
-
-        statsContainer.innerHTML = stats.map(stat => `
-            <div class="bg-white p-6 rounded-lg shadow text-center">
-                <p class="text-gray-600 text-sm mb-2">${stat.label}</p>
-                <p class="text-3xl font-bold ${stat.valor > 0 ? 'text-green-600' : 'text-gray-400'}">${stat.valor}</p>
-            </div>
-        `).join('');
-
-        // Adicionar resumo adicional
-        const resumoDiv = document.createElement('div');
-        resumoDiv.className = 'col-span-full bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg mt-4';
-        resumoDiv.innerHTML = `
-            <h4 class="text-lg font-bold text-gray-800 mb-4">📊 Resumo Geral</h4>
-            <div class="grid md:grid-cols-3 gap-4 text-sm">
-                <div>
-                    <p class="text-gray-600">Melhor Estratégia</p>
-                    <p class="font-bold text-green-700">${melhorEstrategia.nome}</p>
-                    <p class="text-xs text-gray-500">+R$ ${(melhorEstrategia.totalGanho - melhorEstrategia.totalInvestido).toFixed(2)}</p>
-                </div>
-                <div>
-                    <p class="text-gray-600">Pior Estratégia</p>
-                    <p class="font-bold text-red-700">${piorEstrategia.nome}</p>
-                    <p class="text-xs text-gray-500">R$ ${(piorEstrategia.totalGanho - piorEstrategia.totalInvestido).toFixed(2)}</p>
-                </div>
-                <div>
-                    <p class="text-gray-600">Taxa de Acerto</p>
-                    <p class="font-bold text-blue-700">${maiorAcerto} acertos (melhor)</p>
-                    <p class="text-xs text-gray-500">${menorAcerto} acertos (pior)</p>
-                </div>
-            </div>
-        `;
-        
-        if (statsContainer.parentElement) {
-            const existingResumo = statsContainer.parentElement.querySelector('.col-span-full');
-            if (existingResumo) {
-                existingResumo.replaceWith(resumoDiv);
-            } else {
-                statsContainer.parentElement.appendChild(resumoDiv);
-            }
-        }
-    }
-
-    removerDoHistorico(id) {
-        this.mostrarAlertaComConfirmacao('Tem certeza que deseja remover este registro do histórico?', () => {
-            let historico = this.carregarHistorico();
-            historico = historico.filter(r => r.id !== id);
-            this.salvarHistorico(historico);
-            
-            this.mostrarAlerta('Registro removido do histórico!', 'success');
-            this.atualizarExibicaoHistorico();
-            this.atualizarAnalisePerformance();
-        });
-    }
 }
 
-// Inicialização do sistema
-window.lotofacil = new LotofacilEstrategica();
+// Inicialização da aplicação
+document.addEventListener('DOMContentLoaded', () => {
+    window.lotofacil = new LotofacilEstrategica();
+});

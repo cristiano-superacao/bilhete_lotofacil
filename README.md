@@ -3,12 +3,12 @@
 <div align="center">
 
 ![Status](https://img.shields.io/badge/Status-Ativo-green)
-![Versão](https://img.shields.io/badge/Versão-2.2.0-blue)
+![Versão](https://img.shields.io/badge/Versão-3.0.0-blue)
 ![Licença](https://img.shields.io/badge/Licença-MIT-yellow)
 
-**Uma ferramenta de apoio para estudos e estratégias da Lotofácil — simples, confiável e prática.**
+**Ferramenta inteligente de análise e geração de jogos para a Lotofácil baseada em estatísticas reais.**
 
-[🚀 Demonstração](#demonstração) • [📋 Funcionalidades](#funcionalidades) • [⚡ Como Usar](#como-usar) • [🧠 Estratégias](#estratégias)
+[🚀 Demonstração](#-como-executar-localmente) • [✨ Funcionalidades](#-principais-funcionalidades) • [📖 Como Usar](#-passo-a-passo-de-utilização) • [🎲 Estratégias](#-as-12-estratégias)
 
 </div>
 
@@ -16,111 +16,247 @@
 
 ## 📖 Sobre o Projeto
 
-O **LotoFácil Estratégica** é um site responsivo e inteligente que aplica estatísticas conhecidas da Lotofácil para gerar jogos otimizados e únicos em cada análise. O usuário escolhe a estratégia desejada, clica em um botão e recebe os jogos prontos para usar.
+O **LotoFácil Estratégica** é uma aplicação web completa que oferece 12 estratégias avançadas para geração de jogos da Lotofácil, análise estatística baseada nos últimos 150 concursos, histórico de apostas com conferência automática e muito mais.
 
 ### 🎯 Objetivo
 
-Fornecer uma ferramenta baseada em análises estatísticas reais da Lotofácil, ajudando jogadores a criar jogos mais estratégicos em vez de apenas aleatórios.
+Fornecer uma ferramenta profissional e gratuita para apostadores que desejam utilizar dados estatísticos e padrões históricos reais para otimizar suas escolhas, em vez de depender apenas da sorte.
 
-### 🌟 Novidades da Versão 2.1.0
+### 🌟 Novidades da Versão 3.0.0
 
-- **✨ Novas Estratégias**: Adicionadas "Força dos Primos" e "Ciclo das Dezenas".
-- **🎨 UI Melhorada**: Sistema de alertas e notificações totalmente redesenhado, sem usar as janelas nativas do navegador.
-- **✅ Sistema Otimizado**: Todas as 12 estratégias geram exatos 10 jogos únicos.
-
-### 🌟 Funcionalidades da Versão 2.0
-
-- **🆕 8ª Estratégia**: "Frequência Mensal" com dados oficiais da Caixa
-- **📊 API Real**: Integração com `servicebus2.caixa.gov.br`
-- **🎲 Mais Jogos**: Todas as estratégias geram 10 jogos únicos
-- **⚡ Async/Await**: Performance aprimorada para operações assíncronas
-- **🔄 Fallback Inteligente**: Sistema de backup quando API estiver indisponível
-- **🎨 Interface Melhorada**: Nova cor teal para a estratégia especial
+- **📊 Histórico de Apostas Completo**: Salve seus jogos gerados, acompanhe estatísticas financeiras (total investido, ganhos e saldo) e confira resultados automaticamente.
+- **✅ Conferência Inteligente**: O sistema habilita a conferência apenas para apostas cuja data coincide com o último sorteio disponível.
+- **🔄 Atualização Automática de Resultados**: Busque resultados da API da Caixa por número do concurso ou atualize apostas salvas com um clique.
+- **🎨 Interface Redesenhada**: Layout responsivo e profissional em grid 4x3 para as estratégias e cards organizados para o histórico.
+- **💾 Exportação de Dados**: Exporte seu histórico de apostas para arquivo JSON.
+- **� PWA (Progressive Web App)**: Instale a aplicação no seu dispositivo para acesso offline.
 
 ---
 
-## 🚀 Demonstração
+## ✨ Principais Funcionalidades
 
-Para testar o site:
-
-1. Abra o arquivo `index.html` no seu navegador
-2. Insira o último resultado da Lotofácil (opcional)
-3. Escolha uma das 8 estratégias disponíveis
-4. Clique em "Gerar Jogos" e receba seus bilhetes otimizados (10 jogos únicos)
-5. Copie, exporte ou regenere novos jogos conforme necessário
-
----
-
-## 📋 Funcionalidades
-
-### ✨ Principais
-
-- **12 Estratégias Inteligentes**: Baseadas em padrões estatísticos reais, incluindo as novas "Força dos Primos" e "Ciclo das Dezenas".
-- **Interface Responsiva**: Funciona perfeitamente em desktop, tablet e celular
-- **Geração Única**: Garante que os jogos nunca se repitam
-- **Integração API**: Busca dados oficiais da Caixa em tempo real
-- **10 Jogos Únicos**: Todas as estratégias geram exatos 10 jogos únicos
-- **Design Moderno**: Interface clean e profissional
-
-### 🛠️ Ferramentas
-
-- **Copiar Jogos**: Copie um jogo específico ou todos de uma vez
-- **Exportar CSV**: Baixe seus jogos em formato CSV para importar em outros sistemas
-- **Validações**: Sistema completo de validação de dados
-- **Alertas Inteligentes**: Feedback visual para todas as ações do usuário
-
-### 📊 Recursos Extras
-
-- **Cards Informativos**: Cada estratégia tem explicação detalhada
-- **Loading Animado**: Experiência visual durante processamento
-- **Smooth Scroll**: Navegação suave entre seções
-- **Responsivo**: Adapta-se a qualquer tamanho de tela
+- ✅ **12 Estratégias Estatísticas**: Cada uma gera 10 jogos únicos baseados em critérios específicos.
+- ✅ **Números de Referência**: Utiliza os 9 números mais frequentes dos últimos 150 concursos como base.
+- ✅ **Integração com API da Caixa**: Busca automática de resultados oficiais.
+- ✅ **Histórico Completo**: Salve, visualize e confira suas apostas.
+- ✅ **Análise de Performance**: Acompanhe total de apostas, ganhos, investimentos e saldo geral.
+- ✅ **Exportação e Cópia**: Exporte jogos para arquivo TXT ou copie para a área de transferência.
+- ✅ **Design Responsivo**: Funciona perfeitamente em desktops, tablets e smartphones.
 
 ---
 
-## ⚡ Como Usar
+## 🚀 Como Executar Localmente
 
-### 🖥️ **Rodando Localmente**
+### Pré-requisitos
 
-#### **Método 1: Scripts Automáticos (Recomendado)**
+- [Node.js](https://nodejs.org/) instalado (para usar o `npm` e `http-server`)
 
-**Windows:**
-```bash
-# Execute o script de automação
-run.bat
+### Passo a Passo
 
-# Ou manualmente:
-npm start          # Servidor Node.js na porta 3000
-# OU
-npm run serve      # Servidor Python na porta 8000
+1. **Clone o Repositório:**
+   ```bash
+   git clone https://github.com/cristiano-superacao/bilhete_lotofacil.git
+   cd bilhete_lotofacil
+   ```
+
+2. **Instale o Servidor HTTP:**
+   ```bash
+   npm install -g http-server
+   ```
+
+3. **Inicie o Servidor:**
+   ```bash
+   http-server
+   ```
+   Ou, se estiver no Windows, execute:
+   ```powershell
+   .\start-server.ps1
+   ```
+
+4. **Acesse no Navegador:**
+   Abra `http://localhost:8080` (ou o endereço fornecido pelo servidor)
+
+---
+
+## 📖 Passo a Passo de Utilização
+
+### 1️⃣ **Informe o Último Resultado**
+
+Na seção **"Último Resultado"**:
+- Preencha o **número do concurso**, a **data** e as **15 dezenas sorteadas** (separadas por vírgula).
+- Clique em **Salvar**.
+- O resultado será exibido e usado como base para algumas estratégias (como "Poder das Repetidas").
+- **Dica**: Você pode digitar apenas o número do concurso e pressionar Enter — o sistema tentará buscar automaticamente na API da Caixa!
+
+### 2️⃣ **Escolha uma Estratégia**
+
+Na seção **"Estratégias Inteligentes"**:
+- Navegue pelos **12 cards de estratégias**.
+- Clique em **"Saiba mais"** para entender como cada uma funciona.
+- Quando decidir, clique em **"Gerar 10 Jogos"**.
+
+### 3️⃣ **Visualize e Salve seus Jogos**
+
+Na seção **"Seus Jogos Gerados"**:
+- Os **10 jogos únicos** serão exibidos com as 15 dezenas de cada um.
+- **Copie** um jogo específico ou **Exporte** todos para um arquivo TXT.
+- Clique em **"Salvar no Histórico"** para armazenar a aposta.
+
+### 4️⃣ **Acompanhe no Histórico de Apostas**
+
+Na seção **"Histórico de Apostas"**:
+- Visualize todas as suas apostas salvas em **cards organizados**.
+- Cada card mostra:
+  - Nome da estratégia utilizada
+  - Data e hora de geração
+  - Número total de jogos
+  - Prévia dos números (primeiro jogo)
+  - Status: **"Aguardando"** ou **"Conferido"**
+
+### 5️⃣ **Atualize e Confira os Resultados**
+
+Quando o resultado oficial for divulgado:
+1. Clique no botão **"Atualizar Resultados"** na seção de histórico.
+2. O sistema verificará quais apostas no seu histórico coincidem com a **data do último sorteio**.
+3. Essas apostas serão marcadas como **"conferíveis"** e o botão **"Conferir"** ficará verde.
+4. Clique em **"Conferir"** para ver quantos acertos você fez em cada jogo!
+
+### 6️⃣ **Acompanhe suas Estatísticas**
+
+No topo do histórico, você verá:
+- **Total de Apostas**: Quantidade de apostas salvas
+- **Total em Ganhos**: Soma dos prêmios (11, 12 e 13 acertos)
+- **Total Investido**: Valor gasto (R$ 3,00 por jogo)
+- **Saldo Geral**: Ganhos menos investimentos (negativo em vermelho)
+
+---
+
+## 🎲 As 12 Estratégias
+
+### 1. **Poder das Repetidas** 🔄
+- **Como funciona**: Utiliza 5 a 7 números do último concurso e complementa com números estratégicos.
+- **Base estatística**: ~60% dos sorteios repetem pelo menos 5 números do concurso anterior.
+- **Ideal para**: Quem acredita em padrões de continuidade.
+
+### 2. **Equilíbrio Par/Ímpar** ⚖️
+- **Como funciona**: Garante a proporção de 7 pares + 8 ímpares (ou vice-versa).
+- **Base estatística**: ~85% dos sorteios seguem essa distribuição.
+- **Ideal para**: Apostadores que buscam equilíbrio matemático.
+
+### 3. **Números Atrasados** ⏰
+- **Como funciona**: Prioriza dezenas que não saem há mais tempo (60% atrasados + 40% normais).
+- **Base estatística**: Lei dos Grandes Números — números tendem a se equilibrar ao longo do tempo.
+- **Ideal para**: Quem acredita que "a hora vai chegar".
+
+### 4. **Sequências Inteligentes** 🔗
+- **Como funciona**: Evita sequências óbvias (1,2,3... ou 5,10,15...) e cria combinações naturais.
+- **Base estatística**: Padrões lineares raramente aparecem nos sorteios reais.
+- **Ideal para**: Apostadores que buscam combinações menos previsíveis.
+
+### 5. **Divisão por Colunas** 📊
+- **Como funciona**: Distribui os números pelas 5 colunas do volante: (1-5), (6-10), (11-15), (16-20), (21-25).
+- **Base estatística**: Garante cobertura máxima de todas as regiões do volante.
+- **Ideal para**: Quem deseja uma distribuição geográfica no volante.
+
+### 6. **Frequência Histórica** 📈
+- **Como funciona**: Combina 50% números quentes (mais sorteados) + 30% frios + 20% neutros.
+- **Base estatística**: Análise de milhares de sorteios históricos.
+- **Ideal para**: Apostadores que confiam em estatísticas de longo prazo.
+
+### 7. **Matemática dos Finais** 🔢
+- **Como funciona**: Analisa as terminações (0,1,2...9) e evita concentrações de finais iguais.
+- **Base estatística**: Distribuição equilibrada das terminações é mais natural.
+- **Ideal para**: Quem gosta de análises numéricas detalhadas.
+
+### 8. **Frequência Mensal** 📅
+- **Como funciona**: Foca nos números mais sorteados no mês anterior (60% frequentes + 40% balanceamento).
+- **Base estatística**: Dados recentes da API oficial da Caixa.
+- **Ideal para**: Quem acredita em "ondas" de números.
+
+### 9. **Análise do Tira Cinco** ➖
+- **Como funciona**: Remove os 5 números menos sorteados dos últimos 5 meses e gera jogos com os restantes.
+- **Base estatística**: Elimina dezenas "frias" para focar nas mais ativas.
+- **Ideal para**: Apostadores agressivos que excluem números fracos.
+
+### 10. **Bingo da Caixa** 🏆
+- **Como funciona**: Usa os 9 números de referência (mais frequentes nos últimos 150 concursos) + 6 complementares.
+- **Base estatística**: Maximiza as chances usando a base estatística mais sólida.
+- **Ideal para**: Quem busca a estratégia mais "segura" estatisticamente.
+
+### 11. **Força dos Primos** ⚛️
+- **Como funciona**: Usa de 4 a 6 números primos (2,3,5,7,11,13,17,19,23) e complementa com não-primos.
+- **Base estatística**: ~99% dos sorteios contêm números primos.
+- **Ideal para**: Quem acredita no poder matemático dos números primos.
+
+### 12. **Ciclo das Dezenas** 🔄
+- **Como funciona**: Identifica números que ainda não fecharam o ciclo (todas as 25 dezenas sorteadas) nos últimos concursos e os prioriza.
+- **Base estatística**: Análise dos últimos 8-10 concursos para encontrar dezenas "devendo" aparecer.
+- **Ideal para**: Apostadores que buscam completar padrões cíclicos.
+
+---
+
+## 📊 Recursos Avançados
+
+### 🔍 Filtros e Análises
+- **Filtro por Período**: Visualize apostas de períodos específicos (em breve).
+- **Filtro por Estratégia**: Veja apenas apostas de uma estratégia específica (em breve).
+- **Filtro por Status**: Separe apostas "Aguardando" de "Conferidas".
+
+### 💾 Exportação de Dados
+- **Exportar Histórico**: Baixe todas as suas apostas em formato JSON para backup.
+- **Exportar Jogos**: Salve os jogos gerados em arquivo TXT para imprimir ou compartilhar.
+
+### 📱 Progressive Web App (PWA)
+- **Instalação**: Instale a aplicação no seu dispositivo como se fosse um app nativo.
+- **Uso Offline**: Acesse suas apostas salvas mesmo sem internet (após a primeira visita).
+- **Notificações**: Receba alertas quando houver novos resultados (em breve).
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **HTML5**: Estrutura semântica e acessível
+- **CSS3 / Tailwind CSS**: Design moderno e responsivo
+- **JavaScript (ES6+)**: Lógica de geração e análise
+- **Arquitetura Modular**: Código organizado em módulos reutilizáveis
+- **API da Caixa**: Integração com dados oficiais
+- **LocalStorage**: Persistência de dados no navegador
+- **PWA**: Service Workers para funcionalidade offline
+
+---
+
+## 📝 Estrutura do Projeto
+
 ```
-
-**Linux/Mac:**
-```bash
-# Torne o script executável
-chmod +x run.sh
-
-# Execute o script de automação  
-./run.sh
-
-# Ou manualmente:
-npm start          # Servidor Node.js na porta 3000
-# OU
-npm run serve      # Servidor Python na porta 8000
+bilhete_lotofacil/
+├── index.html                 # Página principal
+├── manifest.json              # Configuração PWA
+├── sw.js                      # Service Worker
+├── start-server.ps1           # Script para iniciar servidor (Windows)
+├── assets/
+│   ├── css/
+│   │   └── style.css          # Estilos customizados
+│   ├── js/
+│   │   ├── app.js             # Lógica principal
+│   │   ├── estrategias/       # Módulos de estratégias
+│   │   │   ├── estrategiaRepetidas.js
+│   │   │   ├── estrategiaParImpar.js
+│   │   │   ├── estrategiaAtrasados.js
+│   │   │   ├── estrategiaSequenciasInteligentes.js
+│   │   │   ├── estrategiaDivisaoColunas.js
+│   │   │   ├── estrategiaFrequenciaHistorica.js
+│   │   │   ├── estrategiaMatematicaFinais.js
+│   │   │   ├── estrategiaFrequenciaMensal.js
+│   │   │   ├── estrategiaTiraCinco.js
+│   │   │   ├── estrategiaBingoDaCaixa.js
+│   │   │   ├── estrategiaForcaPrimos.js
+│   │   │   └── estrategiaCicloDezenas.js
+│   │   └── utils/             # Utilitários
+│   │       ├── helpers.js
+│   │       └── pegarAleatorios.js
+│   └── images/                # Ícones e imagens
+└── README.md                  # Documentação
 ```
-
-#### **Método 2: Servidor HTTP Simples**
-
-**Usando Python:**
-```bash
-# Python 3
-python server.py [porta]    # Default: 8000
-
-# Ou usando módulo http.server
-python -m http.server 8000
-```
-
-**Usando Node.js:**
 ```bash
 # Com o servidor customizado
 node server.js [porta]      # Default: 3000
@@ -416,109 +552,61 @@ LotofacilEstrategica/          # Classe principal
 - 📊 **Números de Referência Otimizados**: Cálculo aprimorado dos 9 números mais frequentes
 - 🛡️ **Tratamento de Erros Avançado**: Melhor handling de APIs e fallbacks inteligentes
 - ⚡ **Performance Melhorada**: Funções auxiliares otimizadas e cache inteligente
-- 🧪 **Sistema de Testes**: Página dedicada para validação automática de todas estratégias
-- 🔄 **Retry Logic**: Sistema de tentativas com backoff exponencial para APIs
-- 💾 **Cache Inteligente**: Sistema de cache com invalidação automática
-- 📈 **Monitoramento**: Logs detalhados e métricas de performance
-- ✨ **Nova Estratégia**: Frequência Mensal com dados oficiais da Caixa
-- 🔌 **Integração API**: Conexão com API oficial `servicebus2.caixa.gov.br`
-- 🎲 **10 Jogos Únicos**: Primeira estratégia que gera 10 jogos ao invés de 7
-- ⚡ **Async/Await**: Operações assíncronas para melhor performance
-- 🔄 **Sistema Fallback**: Backup automático quando API estiver indisponível
-- 🎨 **UI Melhorada**: Nova cor teal e loading personalizado
-- 📊 **Algoritmo Avançado**: 60% números frequentes + 40% balanceamento
-- 🛡️ **Error Handling**: Tratamento robusto de erros e timeouts
 
-### **v1.0.0** - *Versão Anterior*
-- 🎯 **7 Estratégias Base**: Implementação das estratégias fundamentais
-- 📱 **Design Responsivo**: Interface mobile-first
-- 📊 **Sistema de Histórico**: Acompanhamento de apostas e resultados
-- 🎨 **Interface Moderna**: Design clean com Tailwind CSS
-- 📈 **Dashboard**: Gráficos e estatísticas de desempenho
-
----
-
-## ⚖️ Aviso Legal
-
-> **IMPORTANTE**: Este site é apenas uma ferramenta estatística e **NÃO GARANTE** resultados financeiros. 
-> 
-> As estratégias são baseadas em análises históricas, mas a Lotofácil continua sendo um jogo de probabilidades. Jogue com responsabilidade e apenas o valor que pode se dar ao luxo de perder.
-
-### Responsabilidades
-- ✅ Ferramenta educativa e estatística
-- ✅ Código aberto e transparente  
-- ✅ Baseado em dados históricos reais
-- ❌ Não garante ganhos financeiros
-- ❌ Não incentiva jogo compulsivo
-- ❌ Não substitui orientação financeira
+### **v3.0.0** - *08/11/2025* ⭐ **ATUAL**
+- 📊 **Histórico de Apostas Completo**: Salve jogos, acompanhe estatísticas financeiras e confira resultados
+- ✅ **Conferência Inteligente**: Sistema habilita conferência apenas para datas coincidentes com sorteios
+- 🔄 **Atualização Automática**: Busca de resultados por número de concurso e atualização de apostas
+- 🎨 **Interface Redesenhada**: Layout responsivo em grid 4x3 e cards profissionais
+- 💾 **Exportação de Dados**: Histórico exportável em JSON
+- 📱 **PWA**: Aplicação instalável para uso offline
+- 🎲 **12 Estratégias**: Todas geram 10 jogos únicos
 
 ---
 
 ## 🤝 Contribuindo
 
-Contribuições são bem-vindas! Para contribuir:
+Contribuições são bem-vindas! Se você tem ideias para novas estratégias ou melhorias:
 
-1. **Fork** o projeto
-2. **Crie** uma branch para sua feature (`git checkout -b feature/NovaEstrategia`)
-3. **Commit** suas mudanças (`git commit -m 'Adiciona nova estratégia'`)
+1. Faça um **fork** do projeto
+2. Crie uma **branch** para sua feature (`git checkout -b feature/NovaEstrategia`)
+3. **Commit** suas mudanças (`git commit -m 'Adiciona nova estratégia X'`)
 4. **Push** para a branch (`git push origin feature/NovaEstrategia`)
-5. **Abra** um Pull Request
-
-### Ideias para Contribuir
-- 🧠 Novas estratégias baseadas em estatísticas
-- 📊 Melhorias na interface de usuário
-- 🐛 Correções de bugs
-- 📖 Melhorias na documentação
-- ⚡ Otimizações de performance
+5. Abra um **Pull Request**
 
 ---
 
 ## 📧 Contato
 
-Para dúvidas, sugestões ou reportar problemas:
+**Desenvolvedor**: Cristiano Santos  
+**WhatsApp**: (71) 9 9337-2960  
+**GitHub**: [@cristiano-superacao](https://github.com/cristiano-superacao)  
+**Repositório**: [bilhete_lotofacil](https://github.com/cristiano-superacao/bilhete_lotofacil)
 
-- **GitHub Issues**: [Abrir issue](https://github.com/seu-usuario/lotofacil-estrategica/issues)
-- **Email**: seu-email@exemplo.com
-- **LinkedIn**: [Seu LinkedIn](https://linkedin.com/in/seu-perfil)
+---
+
+## ⚠️ Aviso Legal
+
+> **IMPORTANTE**: Este projeto é uma ferramenta de apoio estatístico e educacional. Não garantimos resultados em sorteios reais. A Lotofácil é um jogo de probabilidade e os resultados são aleatórios.
+>
+> - Jogue com responsabilidade
+> - Apenas maiores de 18 anos
+> - Não gaste mais do que pode perder
+> - Procure ajuda se identificar sinais de vício em jogos
 
 ---
 
 ## 📜 Licença
 
-Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-```
-MIT License
-
-Copyright (c) 2024-2025 LotoFácil Estratégica
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
-
----
-
-## 🌟 Agradecimentos
-
-- **Comunidade Lotofácil**: Pelos dados e estatísticas compartilhadas
-- **Caixa Econômica Federal**: Pelos dados oficiais da Lotofácil
-- **Desenvolvedores**: Que contribuíram com bibliotecas utilizadas
-- **Usuários**: Pelo feedback e sugestões de melhorias
+Este projeto está sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
 
 <div align="center">
 
-**⭐ Se este projeto te ajudou, deixe uma estrela!**
+**⭐ Se este projeto foi útil para você, deixe uma estrela no repositório!**
 
-**Feito com ❤️ para a comunidade brasileira de jogadores estratégicos**
+Desenvolvido com 💜 por [Cristiano Santos](https://github.com/cristiano-superacao)
 
 [🔝 Voltar ao topo](#-lotofácil-estratégica)
 
