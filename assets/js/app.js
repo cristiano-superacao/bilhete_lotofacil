@@ -135,47 +135,45 @@ class LotofacilEstrategica {
         this.init();
     }
 
-    // Atualiza o histórico marcando jogos cuja data coincide com o último concurso disponível
-    async atualizarJogos() {
-        try {
-            this.mostrarLoading(true, 'Buscando último resultado da Caixa...');
-            const response = await fetch('https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil/');
-            if (!response.ok) {
-                throw new Error('Não foi possível buscar o último concurso da Caixa.');
+    // Atualiza o histórico marcando jogos cuja data de geração é anterior ou igual à data do concurso carregado.
+    habilitarConferenciaApostas(dataConcursoCarregado) {
+        if (!dataConcursoCarregado) return;
+
+        // Normaliza a data para um objeto Date para comparação segura.
+        // A data pode vir como 'YYYY-MM-DD' ou 'DD/MM/YYYY'.
+        let dataReferencia;
+        if (String(dataConcursoCarregado).includes('/')) {
+            const [dia, mes, ano] = dataConcursoCarregado.split('/');
+            dataReferencia = new Date(`${ano}-${mes}-${dia}T23:59:59`); // Considera o final do dia do sorteio.
+        } else {
+            dataReferencia = new Date(`${dataConcursoCarregado}T23:59:59`); // Assume 'YYYY-MM-DD'.
+        }
+
+        if (isNaN(dataReferencia.getTime())) {
+            console.error('Data de referência para conferência é inválida:', dataConcursoCarregado);
+            return;
+        }
+
+        let historico = this.carregarHistorico();
+        let jogosHabilitados = 0;
+
+        historico.forEach(aposta => {
+            // Se a aposta já foi conferida, não faz nada.
+            if (aposta.status === 'conferido') return;
+
+            const dataGeracaoAposta = new Date(aposta.dataGeracao);
+
+            // Habilita se a data de geração da aposta for anterior ou no mesmo dia do sorteio.
+            if (dataGeracaoAposta <= dataReferencia && !aposta.conferivel) {
+                aposta.conferivel = true;
+                jogosHabilitados++;
             }
-            const ultimoConcurso = await response.json();
-            if (!ultimoConcurso || !ultimoConcurso.dataApuracao) {
-                throw new Error('Dados do último concurso são inválidos.');
-            }
+        });
 
-            const dataSorteio = this.formatarDataBrasil(ultimoConcurso.dataApuracao);
-            
-            let historico = this.carregarHistorico();
-            let jogosAtualizados = 0;
-
-            historico.forEach(aposta => {
-                const dataAposta = this.formatarDataBrasil(aposta.dataGeracao);
-                if (dataAposta === dataSorteio) {
-                    if (!aposta.conferivel) {
-                        aposta.conferivel = true;
-                        jogosAtualizados++;
-                    }
-                }
-            });
-
-            if (jogosAtualizados > 0) {
-                this.salvarHistorico(historico);
-                this.atualizarExibicaoHistorico();
-                this.mostrarAlerta(`✅ ${jogosAtualizados} registro(s) de aposta atualizado(s) e liberado(s) para conferência!`, 'success');
-            } else {
-                this.mostrarAlerta('ℹ️ Nenhum jogo no histórico corresponde à data do último sorteio.', 'info');
-            }
-
-        } catch (error) {
-            console.error('Erro ao atualizar jogos:', error);
-            this.mostrarAlerta('Erro ao buscar resultados da Caixa. Verifique a conexão.', 'error');
-        } finally {
-            this.mostrarLoading(false);
+        if (jogosHabilitados > 0) {
+            this.salvarHistorico(historico);
+            this.atualizarExibicaoHistorico();
+            this.mostrarAlerta(`✅ ${jogosHabilitados} aposta(s) habilitada(s) para conferência!`, 'success');
         }
     }
 
@@ -684,7 +682,7 @@ class LotofacilEstrategica {
             this.salvarUltimoResultado();
         });
         
-        // O botão atualizarResultado agora usa onclick="carregarConcurso3528()" direto no HTML
+        // O botão de atualização agora busca o último concurso dinamicamente.
         
         // NOVA FUNCIONALIDADE: Busca automática por número do concurso
         const campoConcurso = document.getElementById('concurso');
@@ -757,7 +755,7 @@ class LotofacilEstrategica {
 
         // Botão para atualizar o status dos jogos no histórico com base no último concurso disponível
         document.getElementById('atualizarResultados')?.addEventListener('click', () => {
-            this.atualizarJogos();
+            this.buscarUltimoConcurso(); // Reutiliza a função de buscar o último concurso
         });
 
         document.getElementById('exportarDados')?.addEventListener('click', () => {
@@ -949,6 +947,9 @@ class LotofacilEstrategica {
         
         // Salvar no localStorage para recuperação
         localStorage.setItem('ultimo_resultado_manual', JSON.stringify(this.ultimoResultado));
+
+        // Habilita a conferência para apostas pendentes
+        this.habilitarConferenciaApostas(data);
     }
     
     exibirUltimoResultado() {
@@ -1202,6 +1203,9 @@ class LotofacilEstrategica {
 
         // Salvar no localStorage
         localStorage.setItem('ultimo_resultado_manual', JSON.stringify(this.ultimoResultado));
+
+        // Habilita a conferência para apostas pendentes
+        this.habilitarConferenciaApostas(data.dataApuracao);
 
         this.mostrarAlerta(`✅ Concurso ${numero} carregado com sucesso!`, 'success');
         return this.ultimoResultado;

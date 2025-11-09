@@ -607,7 +607,7 @@ class LotofacilEstrategica {
             this.salvarUltimoResultado();
         });
         
-        // O botão atualizarResultado agora usa onclick="carregarConcurso3528()" direto no HTML
+        // O botão de atualização agora busca o último concurso dinamicamente.
         
         // NOVA FUNCIONALIDADE: Busca automática por número do concurso
         const campoConcurso = document.getElementById('concurso');
