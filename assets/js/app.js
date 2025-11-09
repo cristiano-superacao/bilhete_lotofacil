@@ -1,4 +1,5 @@
 // IMPORTAÇÃO DOS MÓDULOS DE ESTRATÉGIAS E UTILITÁRIOS
+import { apiManager } from './utils/api-manager.js';
 import { pegarAleatorios } from './utils/pegarAleatorios.js';
 import { 
     calcularFrequenciasGlobais, 
@@ -420,44 +421,28 @@ class LotofacilEstrategica {
     
     async buscarUltimos150Resultados() {
         try {
-            // Para esta implementação, vamos simular 150 resultados baseados em padrões reais
-            // Em uma implementação completa, isso seria feito com API oficial ou base de dados
+            console.log('📊 Buscando últimos 150 resultados...');
             
-            const resultados = [];
+            // Tentar buscar da API interna primeiro (muito mais rápido!)
+            const resultados = await apiManager.buscarUltimosConcursos(150);
             
-            // Buscar o último resultado real primeiro
-            const response = await fetch('https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil/');
-            let ultimoReal = null;
-            
-            if (response.ok) {
-                ultimoReal = await response.json();
+            if (resultados && resultados.length > 0) {
+                console.log(`✅ ${resultados.length} resultados obtidos com sucesso`);
+                
+                // Formatar para o padrão esperado pelo app
+                return resultados.map(r => ({
+                    concurso: r.numero,
+                    dezenas: r.dezenas || r.listaDezenas?.map(n => parseInt(n)) || [],
+                    data: r.dataApuracao
+                }));
             }
             
-            // Simular 150 resultados baseados em padrões estatísticos reais da Lotofácil
-            for (let i = 0; i < 150; i++) {
-                if (i === 0 && ultimoReal && ultimoReal.listaDezenas) {
-                    // Usar resultado real mais recente
-                    resultados.push({
-                        concurso: ultimoReal.numero,
-                        dezenas: ultimoReal.listaDezenas.map(n => parseInt(n)),
-                        data: ultimoReal.dataApuracao
-                    });
-                } else {
-                    // Simular resultados com base em padrões conhecidos
-                    const dezenasSimuladas = this.simularResultadoRealista();
-                    resultados.push({
-                        concurso: (ultimoReal?.numero || 3200) - i,
-                        dezenas: dezenasSimuladas,
-                        data: this.calcularDataAnterior(ultimoReal?.dataApuracao || new Date().toISOString(), i * 2)
-                    });
-                }
-            }
-            
-            return resultados;
+            // Se não conseguiu dados da API, usar fallback
+            console.warn('⚠️ Usando dados simulados como fallback');
+            return this.gerarResultadosSimuladosRealistas(150);
             
         } catch (error) {
             console.warn('Erro ao buscar últimos 150 resultados:', error);
-            // Retornar resultados simulados com base em padrões históricos conhecidos
             return this.gerarResultadosSimuladosRealistas(150);
         }
     }
@@ -997,14 +982,14 @@ class LotofacilEstrategica {
         try {
             this.mostrarLoading(true, `Buscando concurso ${numero}...`);
 
-            console.log(`🎯 Buscando concurso ${numero} na API da Caixa...`);
+            console.log(`🎯 Buscando concurso ${numero} via API Manager...`);
 
-            // Para outros concursos, tentar a API
-            let data = await this.tentarBuscarNaAPI(numero);
+            // Usar API Manager (tenta API interna, fallback para Caixa)
+            let data = await apiManager.buscarConcursoEspecifico(numero);
 
             if (!data) {
-                // Se não encontrou na API, tentar dados simulados realistas
-                console.log(`⚠️ Concurso ${numero} não encontrado na API da Caixa`);
+                // Se não encontrou em nenhuma API, tentar dados simulados realistas
+                console.log(`⚠️ Concurso ${numero} não encontrado`);
                 console.log('� Tentando gerar dados simulados realistas...');
                 
                 // Para concursos recentes, usar dados simulados baseados em padrões reais
@@ -1021,17 +1006,41 @@ class LotofacilEstrategica {
         } catch (error) {
             console.error('❌ Erro ao buscar concurso:', error);
 
-            if (error.name === 'AbortError') {
-                this.mostrarAlerta('⏱️ Timeout: Tente novamente', 'warning');
-            } else if (error.message.includes('não encontrado')) {
+            if (error.message.includes('não encontrado')) {
                 this.mostrarAlerta(`Concurso ${numero} não encontrado ou ainda não sorteado`, 'info');
-            } else if (error.message.includes('CORS') || error.message.includes('fetch')) {
-                // Se der erro de CORS, usar dados simulados para demonstração
-                return this.usarDadosSimulados(numero);
             } else {
-                this.mostrarAlerta('Erro ao conectar com a Caixa. Tente novamente.', 'warning');
+                this.mostrarAlerta('Erro ao buscar concurso. Tente novamente.', 'warning');
             }
-            return null; // Retornar nulo em caso de erro
+            return null;
+        } finally {
+            this.mostrarLoading(false);
+        }
+    }
+
+    // Buscar o último concurso disponível (versão otimizada com API Manager)
+    async buscarUltimoConcurso() {
+        try {
+            this.mostrarLoading(true, 'Buscando último concurso...');
+            
+            console.log('🔍 Buscando último concurso via API Manager...');
+            
+            // Usar API Manager (API interna primeiro, fallback para Caixa)
+            const data = await apiManager.buscarUltimoConcurso();
+            
+            if (data) {
+                await this.processarDadosConcurso(data);
+                this.mostrarAlerta('Último concurso carregado com sucesso!', 'success');
+                
+                // Mostrar estatísticas de API (apenas em desenvolvimento)
+                if (!apiManager.isProduction) {
+                    apiManager.mostrarStats();
+                }
+            } else {
+                this.mostrarAlerta('Não foi possível carregar o último concurso', 'warning');
+            }
+        } catch (error) {
+            console.error('❌ Erro ao buscar último concurso:', error);
+            this.mostrarAlerta('Erro ao buscar último concurso', 'error');
         } finally {
             this.mostrarLoading(false);
         }
