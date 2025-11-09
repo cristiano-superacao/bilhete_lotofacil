@@ -1,13 +1,16 @@
 {
   "name": "lotofacil-estrategica",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Sistema inteligente para gerar jogos da Lotofácil baseados em estatísticas",
+  "type": "module",
   "main": "index.html",
   "scripts": {
     "start": "http-server -p 8000 -c-1",
     "build": "echo 'Build completed'",
-    "dev": "http-server -p 8000 -c-1 -o",
-    "deploy": "netlify deploy --prod"
+    "dev": "netlify dev",
+    "deploy": "netlify deploy --prod",
+    "db:schema": "echo 'Execute database/schema.sql no seu banco Neon PostgreSQL'",
+    "db:import": "node database/import-initial-data.js"
   },
   "keywords": [
     "lotofacil",
@@ -19,7 +22,9 @@
   "author": "LotoFácil Estratégica",
   "license": "MIT",
   "dependencies": {
-    "@neondatabase/serverless": "^0.6.0",
+    "@neondatabase/serverless": "^0.9.0",
+    "@netlify/functions": "^2.4.0",
+    "dotenv": "^16.3.1",
     "pg": "^8.11.3"
   },
   "devDependencies": {
