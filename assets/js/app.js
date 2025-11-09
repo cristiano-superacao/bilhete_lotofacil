@@ -1350,6 +1350,7 @@ class LotofacilEstrategica {
                             </span>
                         </div>
                         <p class="text-xs text-gray-500">Gerado em: ${aposta.data} às ${aposta.hora}</p>
+                        ${aposta.concurso ? `<p class="text-xs text-blue-600 font-semibold mt-1"><i class="fas fa-trophy mr-1"></i>Concurso: ${aposta.concurso} - ${aposta.dataSorteio || 'Data não disponível'}</p>` : ''}
                         <p class="text-xs text-gray-600 font-semibold mt-1">${aposta.jogos.length} jogos salvos</p>
                     </div>
 
