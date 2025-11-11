@@ -8,11 +8,11 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Chart.js para gráficos futuros -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Estilos customizados -->
     <link rel="stylesheet" href="assets/css/style.css">
@@ -254,62 +254,25 @@
             </div>
         </section>
 
-        <!-- Seção análise de performance -->
+        <!-- Seção Análise de Performance -->
         <section id="performance" class="mb-12">
-            <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">
-                <i class="fas fa-chart-line text-green-600 mr-3"></i>
-                Análise de Performance
-            </h2>
-            
-            <div class="grid md:grid-cols-2 gap-6">
-                <!-- Gráfico de acertos -->
-                <div class="bg-white rounded-lg card-shadow p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Distribuição de Acertos</h3>
-                    <canvas id="graficoAcertos" width="400" height="200"></canvas>
-                </div>
-                
-                <!-- Gráfico financeiro -->
-                <div class="bg-white rounded-lg card-shadow p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Performance Financeira</h3>
-                    <canvas id="graficoFinanceiro" width="400" height="200"></canvas>
-                </div>
-            </div>
-
-            <!-- Estatísticas detalhadas -->
-            <div class="bg-white rounded-lg card-shadow p-6 mt-6">
-                <h3 class="text-xl font-bold text-gray-800 mb-6">Estatísticas Detalhadas</h3>
-                <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <div class="text-center p-4 bg-gray-50 rounded-lg">
-                        <div class="text-2xl font-bold text-gray-800" id="acertos11">0</div>
-                        <div class="text-sm text-gray-600">11 Acertos</div>
-                        <div class="text-xs text-green-600" id="premios11">R$ 0,00</div>
-                    </div>
-                    <div class="text-center p-4 bg-gray-50 rounded-lg">
-                        <div class="text-2xl font-bold text-gray-800" id="acertos12">0</div>
-                        <div class="text-sm text-gray-600">12 Acertos</div>
-                        <div class="text-xs text-green-600" id="premios12">R$ 0,00</div>
-                    </div>
-                    <div class="text-center p-4 bg-gray-50 rounded-lg">
-                        <div class="text-2xl font-bold text-gray-800" id="acertos13">0</div>
-                        <div class="text-sm text-gray-600">13 Acertos</div>
-                        <div class="text-xs text-green-600" id="premios13">R$ 0,00</div>
-                    </div>
-                    <div class="text-center p-4 bg-gray-50 rounded-lg">
-                        <div class="text-2xl font-bold text-gray-800" id="acertos14">0</div>
-                        <div class="text-sm text-gray-600">14 Acertos</div>
-                        <div class="text-xs text-green-600" id="premios14">R$ 0,00</div>
-                    </div>
-                    <div class="text-center p-4 bg-gray-50 rounded-lg">
-                        <div class="text-2xl font-bold text-gray-800" id="acertos15">0</div>
-                        <div class="text-sm text-gray-600">15 Acertos</div>
-                        <div class="text-xs text-green-600" id="premios15">R$ 0,00</div>
+            <div class="bg-white rounded-lg card-shadow p-6 border border-green-200">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-chart-line text-green-500 mr-3"></i>
+                    Análise de Performance
+                </h2>
+                <div id="analise-performance-container" class="grid md:grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Conteúdo da análise será inserido aqui -->
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-hourglass-half text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-xl text-gray-500 mb-2">Aguardando conferência...</p>
+                        <p class="text-sm text-gray-400">Confira suas apostas para ver a análise de performance aqui.</p>
                     </div>
                 </div>
             </div>
         </section>
-    </main>
 
-    <!-- Rodapé -->
+    </main>    <!-- Rodapé -->
     <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-4">
             <div class="grid md:grid-cols-3 gap-6">

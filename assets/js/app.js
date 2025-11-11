@@ -30,109 +30,10 @@ class LotofacilEstrategica {
     constructor() {
         this.ultimoResultado = null;
         this.jogosGerados = [];
-        this.estrategiaAtual = null;
-        this.historico = [];
-        this.resultadosOficiais = [];
-        this.ultimos150Resultados = [];
-        this.numerosReferencia = [];
-        this.analises = [
-            {
-                id: 1,
-                titulo: "Poder das Repetidas",
-                descricao: "Utiliza números que saíram no último concurso. 60% dos concursos repetem ao menos 5 números.",
-                icon: "fas fa-redo",
-                cor: "from-blue-400 to-blue-600",
-                detalhes: "Seleciona 5-7 números do último resultado oficial da Caixa e complementa com números estratégicos. Base estatística comprova que 60% dos sorteios repetem pelo menos 5 números do concurso anterior."
-            },
-            {
-                id: 2,
-                titulo: "Equilíbrio Par/Ímpar",
-                descricao: "Mantém proporção ideal entre pares e ímpares (7-8 ou 8-7). 85% dos sorteios seguem essa distribuição.",
-                icon: "fas fa-balance-scale",
-                cor: "from-green-400 to-green-600",
-                detalhes: "Analisa dados oficiais da API da Caixa e garante equilíbrio perfeito: 7 pares + 8 ímpares OU 8 pares + 7 ímpares. Padrão presente em 85% dos sorteios históricos."
-            },
-            {
-                id: 3,
-                titulo: "Números Atrasados",
-                descricao: "Prioriza dezenas que estão há mais tempo sem sair. Princípio da Lei dos Grandes Números.",
-                icon: "fas fa-clock",
-                cor: "from-yellow-400 to-orange-500",
-                detalhes: "Usa dados oficiais da Caixa para identificar números atrasados. Método: 60% números atrasados + 40% números com frequência normal para máxima cobertura."
-            },
-            {
-                id: 4,
-                titulo: "Sequências Inteligentes",
-                descricao: "Evita sequências lógicas e padrões lineares que raramente saem juntos.",
-                icon: "fas fa-link",
-                cor: "from-purple-400 to-purple-600",
-                detalhes: "Analisa padrões da API oficial e cria combinações naturais e menos previsíveis, evitando sequências óbvias que raramente aparecem nos sorteios reais."
-            },
-            {
-                id: 5,
-                titulo: "Divisão por Colunas",
-                descricao: "Distribui números pelas 5 colunas do volante: (1-5), (6-10), (11-15), (16-20), (21-25).",
-                icon: "fas fa-columns",
-                cor: "from-red-400 to-red-600",
-                detalhes: "Usa dados da Caixa para garantir cobertura máxima de todas as regiões do volante, distribuindo números estrategicamente por todas as 5 colunas."
-            },
-            {
-                id: 6,
-                titulo: "Frequência Histórica",
-                descricao: "Combina números quentes e frios: 50% quentes + 30% frios + 20% neutros.",
-                icon: "fas fa-chart-bar",
-                cor: "from-indigo-400 to-indigo-600",
-                detalhes: "Análise completa de milhares de sorteios históricos da API oficial. Balanceia números quentes (mais sorteados), frios (menos sorteados) e neutros para combinações otimizadas."
-            },
-            {
-                id: 7,
-                titulo: "Matemática dos Finais",
-                descricao: "Analisa terminações dos números (0,1,2...9) para distribuição equilibrada das terminações.",
-                icon: "fas fa-calculator",
-                cor: "from-pink-400 to-pink-600",
-                detalhes: "Usa dados oficiais da Caixa para evitar concentrações excessivas de finais iguais. Distribui equilibradamente as terminações para padrões mais naturais de sorteio."
-            },
-            {
-                id: 8,
-                titulo: "Frequência Mensal",
-                descricao: "Análise dos números do mês anterior até o atual usando dados oficiais da Caixa.",
-                icon: "fas fa-calendar-alt",
-                cor: "from-teal-400 to-teal-600",
-                detalhes: "Integração direta com API oficial da Caixa. Busca resultados recentes e calcula frequência real: 60% números mais frequentes + 40% balanceamento. Usa dados oficiais em vez de simulações."
-            },
-            {
-                id: 9,
-                titulo: "Análise do Tira Cinco",
-                descricao: "Remove os 5 números menos sorteados dos últimos 5 meses e gera 10 jogos únicos.",
-                icon: "fas fa-minus-circle",
-                cor: "from-blue-500 to-blue-700",
-                detalhes: "Sistema analisa os últimos 5 meses via API da Caixa, elimina os 5 números menos sorteados e gera jogos estratégicos: 60% mais frequentes + 40% balanceamento."
-            },
-            {
-                id: 10,
-                titulo: "Bingo da Caixa",
-                descricao: "Analisa possibilidades reais e cria jogos com máxima assertividade para acertar 15 pontos.",
-                icon: "fas fa-trophy",
-                cor: "from-green-500 to-green-700",
-                detalhes: "Integração total com dados da Caixa. Analisa padrões e possibilidades reais de acerto dos 15 pontos: 60% números mais frequentes + 40% balanceamento estratégico."
-            },
-            {
-                id: 11,
-                titulo: "Força dos Primos",
-                descricao: "Foca em números primos (2, 3, 5, 7, 11, 13, 17, 19, 23), que aparecem em 99% dos sorteios.",
-                icon: "fas fa-atom",
-                cor: "from-cyan-400 to-cyan-600",
-                detalhes: "Utiliza uma base de 4 a 6 números primos e complementa com dezenas não-primas, buscando um equilíbrio comum nos resultados."
-            },
-            {
-                id: 12,
-                titulo: "Ciclo das Dezenas",
-                descricao: "Identifica dezenas que faltam para fechar o ciclo nos últimos concursos e prioriza elas.",
-                icon: "fas fa-sync-alt",
-                cor: "from-amber-400 to-amber-600",
-                detalhes: "Analisa os últimos 8-10 concursos para encontrar os números que ainda não foram sorteados neste período (ciclo) e os utiliza como base para os novos jogos."
-            }
-        ];
+        this.estrategiaAtual = '';
+        this.graficoAcertos = null; // Adiciona a propriedade para o gráfico de acertos
+        this.graficoFinanceiro = null; // Adiciona a propriedade para o gráfico financeiro
+
         this.init();
     }
 
@@ -188,7 +89,9 @@ class LotofacilEstrategica {
         this.definirDataAtual();
         this.recuperarUltimoResultado();
         this.inicializarNumerosReferencia();
-        this.atualizarExibicaoHistorico();
+        this.atualizarExibicaoHistorico(); // Para carregar o histórico ao iniciar
+        this.buscarUltimoConcurso(true); // Inicia com a busca automática
+        this.atualizarAnalisePerformance(); // Adicionado para carregar a análise ao iniciar
     }
 
     // Funções de formatação de data que estavam faltando
@@ -734,1013 +637,364 @@ class LotofacilEstrategica {
             this.salvarJogosNoHistorico();
         });
         
-        document.getElementById('limparHistorico')?.addEventListener('click', () => {
-            this.limparHistorico();
-        });
-
-        // Botão para atualizar o status dos jogos no histórico com base no último concurso disponível
-        document.getElementById('atualizarResultados')?.addEventListener('click', () => {
-            this.buscarUltimoConcurso(); // Reutiliza a função de buscar o último concurso
-        });
-
-        document.getElementById('exportarDados')?.addEventListener('click', () => {
-            this.exportarHistorico();
-        });
+        document.getElementById('limparHistorico')?.addEventListener('click', () => this.limparHistorico());
+        document.getElementById('exportarDados')?.addEventListener('click', () => this.exportarDados());
+        document.getElementById('atualizarResultados')?.addEventListener('click', () => this.atualizarResultadosConcursos());
     }
 
-    mostrarAlerta(mensagem, tipo = 'info', duracao = 5000) {
-        const container = document.getElementById('alert-container');
-        if (!container) {
-            console.error('Elemento #alert-container não encontrado no DOM.');
-            return;
-        }
-
-        const iconeMap = {
-            success: 'fa-check-circle',
-            error: 'fa-times-circle',
-            warning: 'fa-exclamation-triangle',
-            info: 'fa-info-circle'
-        };
-
-        const corMap = {
-            success: 'bg-green-500',
-            error: 'bg-red-500',
-            warning: 'bg-yellow-500',
-            info: 'bg-blue-500'
-        };
-
-        const icone = iconeMap[tipo] || 'fa-info-circle';
-        const cor = corMap[tipo] || 'bg-blue-500';
-
-        const alertId = `alert-${Date.now()}`;
-        const alertDiv = document.createElement('div');
-        alertDiv.id = alertId;
-        alertDiv.className = `notification ${cor} slide-in-right`;
-        alertDiv.innerHTML = `
-            <i class="fas ${icone} notification-icon"></i>
-            <p>${mensagem}</p>
-            <button class="notification-close">&times;</button>
-        `;
-
-        container.appendChild(alertDiv);
-
-        const removerAlerta = () => {
-            const el = document.getElementById(alertId);
-            if (el) {
-                el.classList.add('fade-out');
-                setTimeout(() => el.remove(), 500);
-            }
-        };
-
-        const timeoutId = setTimeout(removerAlerta, duracao);
-
-        alertDiv.querySelector('.notification-close').addEventListener('click', () => {
-            clearTimeout(timeoutId);
-            removerAlerta();
-        });
-    }
-
-    mostrarAlertaComConfirmacao(mensagem, callbackConfirmacao) {
-        const container = document.getElementById('alert-container');
-        if (!container) {
-            console.error('Elemento #alert-container não encontrado no DOM.');
-            return;
-        }
-
-        const alertId = `alert-confirm-${Date.now()}`;
-        const alertDiv = document.createElement('div');
-        alertDiv.id = alertId;
-        alertDiv.className = 'notification bg-yellow-500 slide-in-right';
-        alertDiv.innerHTML = `
-            <i class="fas fa-exclamation-triangle notification-icon"></i>
-            <div class="flex-grow">
-                <p>${mensagem}</p>
-                <div class="mt-2">
-                    <button class="bg-green-600 text-white px-3 py-1 rounded text-sm mr-2" id="confirm-btn-${alertId}">Confirmar</button>
-                    <button class="bg-red-600 text-white px-3 py-1 rounded text-sm" id="cancel-btn-${alertId}">Cancelar</button>
-                </div>
-            </div>
-        `;
-
-        container.appendChild(alertDiv);
-
-        const removerAlerta = () => {
-            const el = document.getElementById(alertId);
-            if (el) {
-                el.classList.add('fade-out');
-                setTimeout(() => el.remove(), 500);
-            }
-        };
-
-        document.getElementById(`confirm-btn-${alertId}`).addEventListener('click', () => {
-            removerAlerta();
-            callbackConfirmacao();
-        });
-
-        document.getElementById(`cancel-btn-${alertId}`).addEventListener('click', () => {
-            removerAlerta();
-        });
-    }
-
-    mostrarLoading(mostrar, mensagem = 'Carregando...') {
-        let loadingOverlay = document.getElementById('loading-overlay');
-        if (mostrar) {
-            if (!loadingOverlay) {
-                loadingOverlay = document.createElement('div');
-                loadingOverlay.id = 'loading-overlay';
-                loadingOverlay.className = 'fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 transition-opacity duration-300';
-                loadingOverlay.innerHTML = `
-                    <div class="bg-white rounded-lg p-8 shadow-xl flex flex-col items-center text-center">
-                        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24 mb-4"></div>
-                        <p id="loading-message" class="text-lg font-semibold text-gray-700">${mensagem}</p>
-                    </div>
-                `;
-                document.body.appendChild(loadingOverlay);
-                setTimeout(() => loadingOverlay.style.opacity = '1', 10);
-            }
-            document.getElementById('loading-message').textContent = mensagem;
-            loadingOverlay.classList.remove('hidden');
-        } else {
-            if (loadingOverlay) {
-                loadingOverlay.style.opacity = '0';
-                setTimeout(() => loadingOverlay.classList.add('hidden'), 300);
-            }
-        }
-    }
-    
-    salvarUltimoResultado() {
-        const concurso = document.getElementById('concurso').value.trim();
-        const data = document.getElementById('dataConcurso').value;
-        const dezenas = document.getElementById('dezenasUltimoResultado').value.trim();
-        
-        // Validação de campos obrigatórios
-        if (!concurso || !data || !dezenas) {
-            this.mostrarAlerta('Por favor, preencha todos os campos!', 'warning');
-            return;
-        }
-        
-        // Validar concurso
-        const numConcurso = parseInt(concurso);
-        if (isNaN(numConcurso) || numConcurso < 1 || numConcurso > 99999) {
-            this.mostrarAlerta('Número do concurso deve estar entre 1 e 99999!', 'error');
-            return;
-        }
-        
-        // Validar e processar dezenas
-        const dezenasArray = dezenas.split(',').map(n => n.trim()).filter(n => n !== '');
-        
-        if (dezenasArray.length !== 15) {
-            this.mostrarAlerta('Você deve informar exatamente 15 dezenas!', 'error');
-            return;
-        }
-        
-        // Validar cada dezena
-        const dezenasProcessadas = [];
-        for (let dezena of dezenasArray) {
-            // Remover zeros à esquerda e validar
-            const num = parseInt(dezena);
-            if (isNaN(num) || num < 1 || num > 25) {
-                this.mostrarAlerta(`Dezena "${dezena}" é inválida! Use números de 01 a 25.`, 'error');
-                return;
-            }
-            const dezenaFormatada = num.toString().padStart(2, '0');
-            dezenasProcessadas.push(dezenaFormatada);
-        }
-        
-        // Verificar duplicatas
-        const dezenasUnicas = new Set(dezenasProcessadas);
-        if (dezenasUnicas.size !== 15) {
-            this.mostrarAlerta('Não pode haver dezenas repetidas!', 'error');
-            return;
-        }
-        
-        // Validar data
-        const dataObj = new Date(data);
-        const hoje = new Date();
-        if (dataObj > hoje) {
-            this.mostrarAlerta('A data não pode ser futura!', 'warning');
-        }
-        
-        this.ultimoResultado = {
-            concurso: numConcurso,
-            data: dataObj.toLocaleDateString('pt-BR'),
-            dezenas: dezenasProcessadas.sort((a, b) => parseInt(a) - parseInt(b))
-        };
-        
-        this.exibirUltimoResultado();
-        this.mostrarAlerta('Último resultado salvo com sucesso!', 'success');
-        
-        // Salvar no localStorage para recuperação
-        localStorage.setItem('ultimo_resultado_manual', JSON.stringify(this.ultimoResultado));
-
-        // Habilita a conferência para apostas pendentes
-        this.habilitarConferenciaApostas(data);
-    }
-    
-    exibirUltimoResultado() {
-        if (!this.ultimoResultado) return;
-        
-        document.getElementById('concursoDisplay').textContent = this.ultimoResultado.concurso;
-        document.getElementById('dataDisplay').textContent = this.ultimoResultado.data;
-        
-        const dezenasContainer = document.getElementById('dezenasDisplay');
-        dezenasContainer.innerHTML = '';
-        
-        this.ultimoResultado.dezenas.forEach(dezena => {
-            const ball = document.createElement('div');
-            ball.className = 'number-ball number-ball-result';
-            ball.textContent = dezena;
-            dezenasContainer.appendChild(ball);
-        });
-        
-        document.getElementById('ultimoResultadoDisplay').classList.remove('hidden');
-    }
-    
-    tentarBuscarResultadoAutomatico() {
-        this.buscarUltimoResultadoAutomatico();
-    }
-    
-    // NOVA FUNCIONALIDADE: Buscar concurso específico
-    async buscarConcursoEspecifico(numeroConcurso) {
-        // Limpar espaços e validar entrada
-        const numeroLimpo = numeroConcurso?.toString().trim();
-        if (!numeroLimpo) return null;
-
-        const numero = parseInt(numeroLimpo);
-
-        // Validar número do concurso (Lotofácil começou no concurso 1 e já passou dos 3500)
-        if (isNaN(numero) || numero < 1 || numero > 99999) {
-            return null; // Não mostrar erro se vazio ou inválido
-        }
-
-        // Não buscar se é o mesmo concurso já carregado
-        if (this.ultimoResultado && this.ultimoResultado.concurso === numero) {
-            console.log('✅ Concurso já carregado:', numero);
-            return this.ultimoResultado;
-        }
-
-        try {
-            this.mostrarLoading(true, `Buscando concurso ${numero}...`);
-
-            console.log(`🎯 Buscando concurso ${numero} via API Manager...`);
-
-            // Usar API Manager (tenta API interna, fallback para Caixa)
-            let data = await apiManager.buscarConcursoEspecifico(numero);
-
-            if (!data) {
-                // Se não encontrou em nenhuma API, tentar dados simulados realistas
-                console.log(`⚠️ Concurso ${numero} não encontrado`);
-                console.log('� Tentando gerar dados simulados realistas...');
-                
-                // Para concursos recentes, usar dados simulados baseados em padrões reais
-                if (numero >= 3530 && numero <= 3535) {
-                    data = this.gerarDadosSimuladosRealistas(numero);
-                    console.log(`📝 Usando dados simulados para concurso ${numero}:`, data);
-                } else {
-                    throw new Error(`Concurso ${numero} não encontrado ou ainda não sorteado`);
-                }
-            }
-
-            return this.processarDadosConcurso(data, numero);
-
-        } catch (error) {
-            console.error('❌ Erro ao buscar concurso:', error);
-
-            if (error.message.includes('não encontrado')) {
-                this.mostrarAlerta(`Concurso ${numero} não encontrado ou ainda não sorteado`, 'info');
-            } else {
-                this.mostrarAlerta('Erro ao buscar concurso. Tente novamente.', 'warning');
-            }
-            return null;
-        } finally {
-            this.mostrarLoading(false);
-        }
-    }
-
-    // Buscar o último concurso disponível (versão otimizada com API Manager)
-    async buscarUltimoConcurso() {
-        try {
-            this.mostrarLoading(true, 'Buscando último concurso...');
-            
-            console.log('🔍 Buscando último concurso via API Manager...');
-            
-            // Usar API Manager (API interna primeiro, fallback para Caixa)
-            const data = await apiManager.buscarUltimoConcurso();
-            
-            if (data) {
-                await this.processarDadosConcurso(data);
-                this.mostrarAlerta('Último concurso carregado com sucesso!', 'success');
-                
-                // Mostrar estatísticas de API (apenas em desenvolvimento)
-                if (!apiManager.isProduction) {
-                    apiManager.mostrarStats();
-                }
-            } else {
-                this.mostrarAlerta('Não foi possível carregar o último concurso', 'warning');
-            }
-        } catch (error) {
-            console.error('❌ Erro ao buscar último concurso:', error);
-            this.mostrarAlerta('Erro ao buscar último concurso', 'error');
-        } finally {
-            this.mostrarLoading(false);
-        }
-    }
-
-    // Função auxiliar para tentar buscar na API
-    async tentarBuscarNaAPI(numero) {
-        // Timeout para requisições
-        const timeoutMs = 8000; // 8 segundos
-        
-        // Lista de URLs para tentar
-        const urlsParaTentar = [
-            `https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil/${numero}`,
-            `https://loteriasapi.caixa.gov.br/api/v1/lotofacil/${numero}`,
-            `https://apiloterias.com.br/app/v2/result?loteria=lotofacil&concurso=${numero}`
-        ];
-        
-        for (const url of urlsParaTentar) {
-            try {
-                console.log(`🔍 Tentando API: ${url}`);
-                
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-                
-                let response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                        'Cache-Control': 'no-cache',
-                        'Origin': window.location.origin
-                    },
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(`✅ Dados da API (${url}):`, data);
-                    
-                    // Validar se os dados estão completos
-                    if (data && data.numero && data.listaDezenas && data.listaDezenas.length === 15) {
-                        return data;
-                    }
-                    
-                    // Tentar formato alternativo da API
-                    if (data && data.concurso && data.dezenas && data.dezenas.length === 15) {
-                        return {
-                            numero: data.concurso,
-                            dataApuracao: data.data,
-                            listaDezenas: data.dezenas.map(n => n.toString().padStart(2, '0'))
-                        };
-                    }
-                }
-            } catch (error) {
-                if (error.name === 'AbortError') {
-                    console.log(`⏱️ Timeout na API: ${url}`);
-                } else {
-                    console.log(`❌ API falhou (${url}):`, error.message);
-                }
-            }
-        }
-        
-        try {
-            // Tentar API geral e comparar
-            console.log('🔍 Tentando API geral: https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil/');
-            
-            const controller2 = new AbortController();
-            const timeoutId2 = setTimeout(() => controller2.abort(), timeoutMs);
-            
-            let response = await fetch('https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil/', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                    'Cache-Control': 'no-cache'
-                },
-                signal: controller2.signal
-            });
-            
-            clearTimeout(timeoutId2);
-            
-            if (response.ok) {
-                const ultimoData = await response.json();
-                console.log('✅ Dados da API geral:', ultimoData);
-                console.log(`📊 Último concurso disponível: ${ultimoData.numero}, Solicitado: ${numero}`);
-                
-                // Se o número solicitado é o último disponível, usar
-                if (parseInt(ultimoData.numero) === numero) {
-                    return ultimoData;
-                }
-                
-                // Se o concurso solicitado é maior que o último disponível
-                if (numero > parseInt(ultimoData.numero)) {
-                    console.log(`⚠️ Concurso ${numero} ainda não sorteado. Último: ${ultimoData.numero}`);
-                }
-            } else {
-                console.log(`❌ API geral retornou status: ${response.status}`);
-            }
-        } catch (error) {
-            if (error.name === 'AbortError') {
-                console.log('⏱️ Timeout na API geral');
-            } else {
-                console.log('❌ API geral falhou:', error.message);
-            }
-        }
-        
-        return null;
-    }
-
-    // Função para gerar dados simulados realistas para concursos recentes
-    gerarDadosSimuladosRealistas(numero) {
-        // Dados REAIS baseados no site oficial da Caixa
-        const concursos = {
-            3531: {
-                numero: 3531,
-                dataApuracao: '05/11/2025',
-                listaDezenas: ['01', '03', '04', '05', '07', '08', '10', '11', '12', '14', '15', '16', '18', '19', '22']
-            },
-            3532: {
-                numero: 3532,
-                dataApuracao: '06/11/2025',
-                listaDezenas: ['02', '04', '05', '07', '09', '11', '12', '14', '15', '17', '19', '21', '23', '24', '25']
-            },
-            3533: {
-                numero: 3533,
-                dataApuracao: '07/11/2025',
-                listaDezenas: ['01', '02', '05', '08', '09', '10', '12', '13', '16', '17', '18', '20', '21', '23', '25']
-            }
-        };
-
-        if (concursos[numero]) {
-            console.log(`✅ Usando dados REAIS do site da Caixa para concurso ${numero}`);
-            return concursos[numero];
-        }
-
-        return {
-            numero: numero,
-            dataApuracao: '06/11/2025',
-            listaDezenas: this.simularResultadoRealista().map(n => n.toString().padStart(2, '0'))
-        };
-    }
-    
-    // Função auxiliar para processar dados do concurso
-    processarDadosConcurso(data, numero) {
-        // Validar dados recebidos
-        if (!this.validarDadosSimples(data)) {
-            throw new Error('Dados do concurso inválidos');
-        }
-
-        console.log('✅ Dados recebidos:', data);
-
-        // Atualizar resultado
-        this.ultimoResultado = {
-            concurso: parseInt(data.numero),
-            data: this.formatarDataBrasil(data.dataApuracao),
-            dezenas: data.listaDezenas.map(n => n.toString().padStart(2, '0')).sort((a, b) => parseInt(a) - parseInt(b))
-        };
-
-        console.log('🎱 Resultado processado:', this.ultimoResultado);
-
-        // Preencher campos automaticamente
-        document.getElementById('dataConcurso').value = this.converterDataParaInput(data.dataApuracao);
-        document.getElementById('dezenasUltimoResultado').value = this.ultimoResultado.dezenas.join(',');
-
-        // Exibir resultado
-        this.exibirUltimoResultado();
-
-        // Salvar no localStorage
-        localStorage.setItem('ultimo_resultado_manual', JSON.stringify(this.ultimoResultado));
-
-        // Habilita a conferência para apostas pendentes
-        this.habilitarConferenciaApostas(data.dataApuracao);
-
-        this.mostrarAlerta(`✅ Concurso ${numero} carregado com sucesso!`, 'success');
-        return this.ultimoResultado;
-    }
-
-    salvarJogosNoHistorico() {
-        if (this.jogosGerados.length === 0) {
-            this.mostrarAlerta('Nenhum jogo gerado para salvar.', 'warning');
-            return;
-        }
-
-        const estrategiaInfo = this.analises.find(a => a.id === this.estrategiaAtual);
-        if (!estrategiaInfo) {
-            this.mostrarAlerta('Estratégia não encontrada. Não é possível salvar.', 'error');
-            return;
-        }
-
-        const agora = new Date();
-        const dataFormatada = agora.toLocaleDateString('pt-BR');
-        const horaFormatada = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        const dataGeracaoISO = agora.toISOString();
-
-        const novoRegistro = {
-            id: Date.now(),
-            estrategia: estrategiaInfo.titulo,
-            data: dataFormatada,
-            hora: horaFormatada,
-            dataGeracao: dataGeracaoISO, // Adiciona a data em formato ISO para comparações
-            jogos: this.jogosGerados,
-            status: 'não conferido',
-            conferivel: false // Inicia como não conferível
-        };
-
-        this.historico.unshift(novoRegistro); // Adiciona no início do array
-        this.salvarHistorico(this.historico);
-        this.atualizarExibicaoHistorico();
-        this.mostrarAlerta('Jogos salvos no histórico com sucesso!', 'success');
-    }
-
-    carregarHistorico() {
-        try {
-            const historicoSalvo = localStorage.getItem('lotofacil_historico');
-            return historicoSalvo ? JSON.parse(historicoSalvo) : [];
-        } catch (error) {
-            console.error('Erro ao carregar histórico:', error);
-            this.mostrarAlerta('Não foi possível carregar o histórico. O formato pode estar corrompido.', 'error');
-            return [];
-        }
-    }
-
-    exportarHistorico() {
-        if (this.historico.length === 0) {
-            this.mostrarAlerta('Nenhum dado no histórico para exportar.', 'info');
-            return;
-        }
-
-        try {
-            const dadosParaExportar = JSON.stringify(this.historico, null, 2);
-            const blob = new Blob([dadosParaExportar], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `historico_lotofacil_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            this.mostrarAlerta('Histórico exportado com sucesso!', 'success');
-        } catch (error) {
-            console.error('Erro ao exportar histórico:', error);
-            this.mostrarAlerta('Ocorreu um erro ao exportar os dados.', 'error');
-        }
-    }
-
-    // Função auxiliar para usar dados simulados (fallback)
-    usarDadosSimulados(numero) {
-        console.log(`🔄 Usando dados simulados para concurso ${numero}...`);
-
-        // Dados simulados baseados em padrões reais da Lotofácil
-        const dadosSimulados = {
-            numero: numero,
-            dataApuracao: '03/11/2025', // Data atual
-            listaDezenas: this.gerarNumerosRealistasParaConcurso(numero)
-        };
-
-        this.mostrarAlerta(`⚠️ Usando dados simulados para concurso ${numero}`, 'warning');
-        return this.processarDadosConcurso(dadosSimulados, numero);
-    }
-
-    // Validação simplificada
-    validarDadosSimples(data) {
-        return data && 
-               data.numero && 
-               data.dataApuracao && 
-               Array.isArray(data.listaDezenas) && 
-               data.listaDezenas.length === 15;
-    }
-    
-    salvarHistorico(historico) {
-        try {
-            localStorage.setItem('lotofacil_historico', JSON.stringify(historico));
-            this.historico = historico; // Atualiza a propriedade da classe
-        } catch (error) {
-            console.error('Erro ao salvar no histórico:', error);
-            this.mostrarAlerta('Erro ao salvar no histórico!', 'error');
-        }
-    }
-
-    atualizarExibicaoHistorico() {
-        const container = document.getElementById('historico-container');
+    /**
+   * Atualiza a seção de Análise de Performance com gráficos e estatísticas.
+   */
+    atualizarAnalisePerformance() {
+        const historico = this.obterHistoricoFiltrado();
+        const container = document.getElementById('analise-performance-container');
         if (!container) return;
 
-        this.historico = this.carregarHistorico(); // Garante que o histórico está atualizado
+        const apostasConferidas = historico.filter(aposta => aposta.status === 'conferido');
 
-        // Atualizar estatísticas
-        this.atualizarEstatisticasHistorico();
-
-        if (this.historico.length === 0) {
+        if (apostasConferidas.length === 0) {
             container.innerHTML = `
                 <div class="col-span-full text-center py-12">
-                    <i class="fas fa-folder-open text-6xl text-gray-300 mb-4"></i>
-                    <p class="text-xl text-gray-500 mb-2">Nenhuma aposta no histórico.</p>
-                    <p class="text-sm text-gray-400">Gere novos jogos e salve-os para vê-los aqui.</p>
+                    <i class="fas fa-hourglass-half text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-xl text-gray-500 mb-2">Aguardando conferência...</p>
+                    <p class="text-sm text-gray-400">Confira suas apostas para ver a análise de performance aqui.</p>
                 </div>
             `;
             return;
         }
 
-        container.innerHTML = this.historico.map(aposta => {
-            const podeConferir = aposta.conferivel === true;
-            const statusTexto = aposta.status === 'conferido' ? 'Conferido' : 'Aguardando';
-            const statusCor = aposta.status === 'conferido' ? 'bg-green-500' : 'bg-yellow-500';
+        // Prepara o container para os gráficos
+        container.innerHTML = `
+            <div class="bg-white rounded-lg card-shadow p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Distribuição de Acertos</h3>
+                <canvas id="graficoAcertos"></canvas>
+            </div>
+            <div class="bg-white rounded-lg card-shadow p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Performance Financeira (Últimas 10 Apostas)</h3>
+                <canvas id="graficoFinanceiro"></canvas>
+            </div>
+        `;
 
-            return `
-                <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                    <!-- Cabeçalho do Card -->
-                    <div class="p-4 border-b border-gray-100">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-gray-800 text-sm">${aposta.estrategia}</h4>
-                            <span class="text-xs font-semibold py-1 px-3 rounded-full text-white ${statusCor}">
-                                ${statusTexto}
-                            </span>
-                        </div>
-                        <p class="text-xs text-gray-500">Gerado em: ${aposta.data} às ${aposta.hora}</p>
-                        ${aposta.concurso ? `<p class="text-xs text-blue-600 font-semibold mt-1"><i class="fas fa-trophy mr-1"></i>Concurso: ${aposta.concurso} - ${aposta.dataSorteio || 'Data não disponível'}</p>` : ''}
-                        <p class="text-xs text-gray-600 font-semibold mt-1">${aposta.jogos.length} jogos salvos</p>
-                    </div>
+        // Calcula dados para os gráficos
+        const contagemAcertos = { '11': 0, '12': 0, '13': 0, '14': 0, '15': 0 };
+        const performanceFinanceira = {
+            labels: [],
+            investimentos: [],
+            ganhos: []
+        };
 
-                    <!-- Prévia dos Jogos -->
-                    <div class="p-4 bg-gray-50">
-                        <p class="text-xs text-gray-600 mb-2 font-semibold">Prévia dos jogos:</p>
-                        <div class="flex flex-wrap gap-1 justify-center">
-                            ${aposta.jogos[0].map(num => `<div class="number-ball-sm">${num.toString().padStart(2, '0')}</div>`).join('')}
-                        </div>
-                        ${aposta.jogos.length > 1 ? `<p class="text-xs text-gray-500 text-center mt-2">(+ ${aposta.jogos.length - 1} jogos)</p>` : ''}
-                    </div>
-
-                    <!-- Botões de Ação -->
-                    <div class="p-3 grid grid-cols-3 gap-2">
-                        <button 
-                            onclick="lotofacil.conferirAposta(${aposta.id})"
-                            class="px-3 py-2 rounded text-white text-xs font-semibold transition-colors ${podeConferir ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-400 cursor-not-allowed'}"
-                            ${!podeConferir ? `disabled title="Clique em 'Atualizar Resultados' para verificar se há resultados disponíveis para conferência"` : 'title="Conferir resultado desta aposta"'}
-                        >
-                            <i class="fas fa-check-circle mr-1"></i> Conferir
-                        </button>
-                        <button 
-                            onclick="lotofacil.verDetalhesAposta(${aposta.id})"
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-xs font-semibold transition-colors"
-                            title="Ver todos os jogos salvos"
-                        >
-                            <i class="fas fa-eye mr-1"></i> Ver Todos
-                        </button>
-                        <button 
-                            onclick="lotofacil.removerAposta(${aposta.id})"
-                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-xs font-semibold transition-colors"
-                            title="Remover esta aposta"
-                        >
-                            <i class="fas fa-trash-alt mr-1"></i> Remover
-                        </button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    atualizarEstatisticasHistorico() {
-        const totalApostasEl = document.getElementById('totalApostas');
-        const totalGanhosEl = document.getElementById('totalGanhos');
-        const totalInvestidoEl = document.getElementById('totalInvestido');
-        const saldoGeralEl = document.getElementById('saldoGeral');
-
-        if (!totalApostasEl || !totalGanhosEl || !totalInvestidoEl || !saldoGeralEl) return;
-
-        const totalApostas = this.historico.length;
-        let totalGanhos = 0;
-        let totalInvestido = this.historico.reduce((acc, aposta) => acc + (aposta.jogos.length * 3), 0); // R$ 3,00 por jogo
-
-        // Calcular ganhos baseados nos resultados conferidos
-        this.historico.forEach(aposta => {
-            if (aposta.resultadoConferencia && aposta.resultadoConferencia.todosOsResultados) {
-                aposta.resultadoConferencia.todosOsResultados.forEach(resultado => {
-                    const acertos = resultado.acertos;
-                    if (acertos === 11) totalGanhos += 6;
-                    else if (acertos === 12) totalGanhos += 12;
-                    else if (acertos === 13) totalGanhos += 30;
-                    else if (acertos === 14) totalGanhos += 0; // Valor variável, não calculado
-                    else if (acertos === 15) totalGanhos += 0; // Valor variável, não calculado
+        apostasConferidas.forEach(aposta => {
+            if (aposta.resultados && aposta.resultados.acertos) {
+                aposta.resultados.acertos.forEach(acerto => {
+                    if (contagemAcertos.hasOwnProperty(acerto.pontos)) {
+                        contagemAcertos[acerto.pontos]++;
+                    }
                 });
             }
         });
-
-        const saldoGeral = totalGanhos - totalInvestido;
-
-        totalApostasEl.textContent = totalApostas;
-        totalGanhosEl.textContent = `R$ ${totalGanhos.toFixed(2).replace('.', ',')}`;
-        totalInvestidoEl.textContent = `R$ ${totalInvestido.toFixed(2).replace('.', ',')}`;
-        saldoGeralEl.textContent = `R$ ${saldoGeral.toFixed(2).replace('.', ',')}`;
         
-        // Mudar cor do saldo se for negativo
-        if (saldoGeral < 0) {
-            saldoGeralEl.classList.remove('text-purple-900');
-            saldoGeralEl.classList.add('text-red-900');
-        } else {
-            saldoGeralEl.classList.remove('text-red-900');
-            saldoGeralEl.classList.add('text-purple-900');
-        }
+        // Pegar as últimas 10 apostas para o gráfico financeiro
+        const ultimas10Apostas = apostasConferidas.slice(-10);
+        ultimas10Apostas.forEach(aposta => {
+            performanceFinanceira.labels.push(`Concurso ${aposta.concurso}`);
+            performanceFinanceira.investimentos.push(aposta.jogos.length * 3.50);
+            performanceFinanceira.ganhos.push(aposta.ganhoTotal || 0);
+        });
+
+
+        this.renderizarGraficos(contagemAcertos, performanceFinanceira);
     }
 
-    async conferirAposta(id) {
-        const aposta = this.historico.find(r => r.id === id);
-        if (!aposta) {
-            this.mostrarAlerta('Aposta não encontrada no histórico.', 'error');
-            return;
-        }
-
-        // Usa o último resultado carregado na aplicação (seja manual ou automático)
-        const resultadoParaConferencia = this.ultimoResultado;
-
-        if (!resultadoParaConferencia || !resultadoParaConferencia.dezenas) {
-            this.mostrarAlerta('Nenhum resultado de concurso carregado para conferir. Por favor, insira ou busque um resultado primeiro.', 'warning');
-            return;
-        }
-
-        this.mostrarLoading(true, `Conferindo aposta com o concurso ${resultadoParaConferencia.concurso}...`);
-
-        let totalAcertosMax = 0;
-        let melhorJogo = null;
-        let todosOsResultados = [];
-
-        aposta.jogos.forEach((jogo, index) => {
-            const acertos = jogo.filter(dezena => resultadoParaConferencia.dezenas.includes(dezena.toString().padStart(2, '0')));
-            const numeroAcertos = acertos.length;
-
-            todosOsResultados.push({ jogo: index + 1, acertos: numeroAcertos, numeros: acertos });
-
-            if (numeroAcertos > totalAcertosMax) {
-                totalAcertosMax = numeroAcertos;
-                melhorJogo = jogo;
+    /**
+     * Renderiza os gráficos de performance usando Chart.js.
+     * @param {object} contagemAcertos - Dados para o gráfico de distribuição de acertos.
+     * @param {object} performanceFinanceira - Dados para o gráfico de performance financeira.
+     */
+    renderizarGraficos(contagemAcertos, performanceFinanceira) {
+        // Gráfico de Distribuição de Acertos
+        const ctxAcertos = document.getElementById('graficoAcertos')?.getContext('2d');
+        if (ctxAcertos) {
+            if (this.graficoAcertos) {
+                this.graficoAcertos.destroy();
             }
-        });
+            this.graficoAcertos = new Chart(ctxAcertos, {
+                type: 'bar',
+                data: {
+                    labels: ['11', '12', '13', '14', '15 Acertos'],
+                    datasets: [{
+                        label: 'Quantidade de Prêmios',
+                        data: Object.values(contagemAcertos),
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(153, 102, 255, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
 
-        // Atualiza o status da aposta
-        aposta.status = 'conferido';
-        aposta.resultadoConferencia = {
-            concurso: resultadoParaConferencia.concurso,
-            data: resultadoParaConferencia.data,
-            dezenasSorteadas: resultadoParaConferencia.dezenas,
-            melhorResultado: {
-                acertos: totalAcertosMax,
-                jogo: melhorJogo
-            },
-            todosOsResultados: todosOsResultados
-        };
-
-        this.salvarHistorico(this.historico);
-        this.atualizarExibicaoHistorico();
-        this.mostrarLoading(false);
-
-        // Exibe o resultado em um modal
-        this.exibirModalResultadoConferencia(aposta);
-    }
-
-    exibirModalResultadoConferencia(aposta) {
-        const { concurso, data, dezenasSorteadas, melhorResultado } = aposta.resultadoConferencia;
-        const premiacao = {
-            11: 'R$ 6,00',
-            12: 'R$ 12,00',
-            13: 'R$ 30,00',
-            14: 'Variável',
-            15: 'Variável (Prêmio Máximo)'
-        };
-        const premio = premiacao[melhorResultado.acertos] || 'Nenhum';
-
-        const modal = document.createElement('div');
-        modal.className = 'fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4';
-        modal.innerHTML = `
-            <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full p-6 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto" id="modal-conferencia">
-                <div class="flex items-center justify-between mb-4 border-b pb-3">
-                    <h3 class="text-2xl font-bold text-gray-800">Resultado da Conferência</h3>
-                    <button class="text-gray-500 hover:text-gray-800 text-2xl" onclick="this.closest('.fixed').remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="space-y-4">
-                    <div class="bg-gray-50 rounded-lg p-4">
-                        <p class="text-sm text-gray-600">Concurso: <strong class="text-lg text-gray-900">${concurso}</strong></p>
-                        <p class="text-sm text-gray-600">Data do Sorteio: <strong class="text-lg text-gray-900">${data}</strong></p>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700 mb-2">Dezenas Sorteadas:</h4>
-                        <div class="flex flex-wrap gap-2">
-                            ${dezenasSorteadas.map(d => `<div class="number-ball number-ball-result">${d}</div>`).join('')}
-                        </div>
-                    </div>
-                    <hr>
-                    <div>
-                        <h4 class="font-semibold text-gray-700 mb-2">Seu Melhor Resultado (${aposta.jogos.length} jogos conferidos):</h4>
-                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                            <p class="text-xl font-bold text-blue-800">${melhorResultado.acertos} Acertos</p>
-                            <p class="font-semibold text-blue-700">Prêmio Estimado: ${premio}</p>
-                            <div class="flex flex-wrap gap-2 mt-3">
-                                ${melhorResultado.jogo.map(num => {
-                                    const acertou = dezenasSorteadas.includes(num.toString().padStart(2, '0'));
-                                    return `<div class="number-ball ${acertou ? 'bg-green-500 text-white' : 'bg-gray-200'}">${num.toString().padStart(2, '0')}</div>`;
-                                }).join('')}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-6 text-right">
-                    <button class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors" 
-                            onclick="this.closest('.fixed').remove()">
-                        Fechar
-                    </button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        setTimeout(() => {
-            document.getElementById('modal-conferencia').classList.remove('scale-95');
-        }, 10);
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove();
+        // Gráfico de Performance Financeira
+        const ctxFinanceiro = document.getElementById('graficoFinanceiro')?.getContext('2d');
+        if (ctxFinanceiro) {
+            if (this.graficoFinanceiro) {
+                this.graficoFinanceiro.destroy();
             }
-        });
+            this.graficoFinanceiro = new Chart(ctxFinanceiro, {
+                type: 'line',
+                data: {
+                    labels: performanceFinanceira.labels,
+                    datasets: [
+                        {
+                            label: 'Investimento (R$)',
+                            data: performanceFinanceira.investimentos,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: true,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Ganhos (R$)',
+                            data: performanceFinanceira.ganhos,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            fill: true,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
-    removerAposta(id) {
-        this.mostrarAlertaComConfirmacao('Tem certeza que deseja remover esta aposta do histórico?', () => {
-            this.historico = this.historico.filter(r => r.id !== id);
-            this.salvarHistorico(this.historico);
-            this.atualizarExibicaoHistorico();
-            this.mostrarAlerta('Aposta removida do histórico.', 'success');
-        });
+    // === NOVAS FUNCIONALIDADES: RESULTADOS E CONFERÊNCIA ===
+    
+    async buscarUltimoResultadoAutomatico() {
+        try {
+            console.log('🔄 Buscando último resultado automaticamente...');
+            
+            // Tenta buscar o último concurso salvo
+            const ultimoSalvo = localStorage.getItem('ultimo_resultado_manual');
+            if (ultimoSalvo) {
+                const dadosUltimoSalvo = JSON.parse(ultimoSalvo);
+                const hoje = new Date();
+                const dataUltimoSalvo = new Date(dadosUltimoSalvo.data);
+                
+                // Se o último resultado salvo é de hoje, não precisa buscar novamente
+                if (dataUltimoSalvo.toDateString() === hoje.toDateString()) {
+                    console.log('✅ Último resultado já está atualizado:', dadosUltimoSalvo);
+                    this.ultimoResultado = dadosUltimoSalvo;
+                    this.exibirUltimoResultado();
+                    return;
+                }
+            }
+            
+            // Se não há último salvo ou é de dias anteriores, busca o último concurso
+            await this.buscarUltimoConcurso();
+        } catch (error) {
+            console.error('Erro ao buscar último resultado automático:', error);
+        }
     }
-
-    verDetalhesAposta(id) {
-        const aposta = this.historico.find(r => r.id === id);
+    
+    conferirAposta(apostaId) {
+        const aposta = this.historico.find(a => a.id === apostaId);
         if (!aposta) return;
 
-        const modal = document.createElement('div');
-        modal.className = 'fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4';
-        modal.innerHTML = `
-            <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full p-6 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto" id="modal-detalhes">
-                <div class="flex items-center justify-between mb-4 border-b pb-3">
-                    <h3 class="text-2xl font-bold text-gray-800">Detalhes da Aposta</h3>
-                    <button class="text-gray-500 hover:text-gray-800 text-2xl" onclick="this.closest('.fixed').remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="space-y-4">
-                    <p><strong>Estratégia:</strong> ${aposta.estrategia}</p>
-                    <p><strong>Data:</strong> ${aposta.data} às ${aposta.hora}</p>
-                    <p><strong>Total de Jogos:</strong> ${aposta.jogos.length}</p>
-                    <div class="space-y-3">
-                        <h4 class="font-semibold">Jogos Salvos:</h4>
-                        ${aposta.jogos.map((jogo, index) => `
-                            <div class="flex items-center gap-3 bg-gray-50 p-2 rounded">
-                                <span class="font-bold text-gray-600">${index + 1}:</span>
-                                <div class="flex flex-wrap gap-1">
-                                    ${jogo.map(num => `<div class="number-ball-sm">${num.toString().padStart(2, '0')}</div>`).join('')}
-                                </div>
-                            </div>
-                        `).join('')}
+        const dezenasSorteadas = this.resultadosConcursos[aposta.concurso];
+        if (!dezenasSorteadas) {
+          this.exibirNotificacao('Resultado do concurso não encontrado para conferência.', 'erro');
+          return;
+        }
+
+        const premiacao = {
+            11: 7.00,
+            12: 14.00,
+            13: 35.00,
+            14: 1703.57, // Valor médio, pode variar
+            15: 1800000.00 // Valor médio, pode variar
+        };
+
+        let ganhoTotalAposta = 0;
+        const acertosPorJogo = [];
+
+        aposta.jogos.forEach(jogo => {
+            const acertos = jogo.filter(num => dezenasSorteadas.includes(num)).length;
+            const ganho = premiacao[acertos] || 0;
+            ganhoTotalAposta += ganho;
+            
+            acertosPorJogo.push({
+                acertos,
+                numerosAcertados: jogo.filter(num => dezenasSorteadas.includes(num))
+            });
+        });
+
+        // Atualiza a aposta com os resultados da conferência
+        aposta.resultados = {
+            concurso: aposta.concurso,
+            dezenasSorteadas,
+            acertos: acertosPorJogo,
+            ganhoTotal: ganhoTotalAposta
+        };
+
+        // Atualiza o status da aposta para 'conferido'
+        aposta.status = 'conferido';
+
+        this.salvarHistorico();
+        this.atualizarExibicaoHistorico();
+
+        // Exibir modal com o resultado da conferência
+        this.exibirModalResultadoConferencia(aposta, dezenasSorteadas, acertosPorJogo, ganhoTotalAposta);
+    }
+
+    exibirModalResultadoConferencia(aposta, dezenasSorteadas, acertosPorJogo, ganhoTotalAposta) {
+        const modal = document.getElementById('modal-conferencia');
+        const conteudoModal = document.getElementById('modal-conferencia-conteudo');
+        if (!modal || !conteudoModal) return;
+
+        const premiacao = {
+            11: 7.00,
+            12: 14.00,
+            13: 35.00,
+            14: 1703.57, // Valor médio, pode variar
+            15: 1800000.00 // Valor médio, pode variar
+        };
+
+        let detalhesJogosHTML = '';
+        aposta.jogos.forEach((jogo, index) => {
+            const { acertos, numerosAcertados } = acertosPorJogo[index];
+            const ganhoJogo = premiacao[acertos] || 0;
+            const corTexto = ganhoJogo > 0 ? 'text-green-600' : 'text-red-600';
+            const corFundo = ganhoJogo > 0 ? 'bg-green-50' : 'bg-red-50';
+
+            detalhesJogosHTML += `
+                <div class="p-3 rounded-lg ${corFundo} border ${ganhoJogo > 0 ? 'border-green-200' : 'border-red-200'}">
+                    <div class="flex justify-between items-center">
+                        <span class="font-semibold">Jogo ${index + 1}: ${acertos} acertos</span>
+                        <span class="font-bold ${corTexto}">Ganho: R$ ${ganhoJogo.toFixed(2)}</span>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                        Números acertados: ${numerosAcertados.join(', ') || 'Nenhum'}
                     </div>
                 </div>
-                 <div class="mt-6 text-right">
-                    <button class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors" 
-                            onclick="this.closest('.fixed').remove()">
-                        Fechar
-                    </button>
+            `;
+        });
+
+        conteudoModal.innerHTML = `
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Resultado da Conferência</h2>
+                        <p class="text-sm text-gray-500">Concurso ${aposta.concurso} - Estratégia: ${aposta.estrategia}</p>
+                    </div>
+                    <button onclick="document.getElementById('modal-conferencia').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
                 </div>
+
+                <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                    <h3 class="font-semibold text-gray-700 mb-2">Dezenas Sorteadas</h3>
+                    <div class="flex flex-wrap gap-2">
+                        ${dezenasSorteadas.map(d => `<span class="numero-sorteado">${d}</span>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="bg-purple-50 border border-purple-200 p-4 rounded-lg mb-6 text-center">
+                    <p class="text-lg text-purple-800">Ganho Total na Aposta</p>
+                    <p class="text-3xl font-bold text-purple-900">R$ ${ganhoTotalAposta.toFixed(2)}</p>
+                </div>
+
+                <details class="bg-gray-50 rounded-lg p-3">
+                    <summary class="font-semibold text-gray-700 cursor-pointer">Ver detalhes por jogo</summary>
+                    <div class="mt-4 space-y-3">
+                        ${detalhesJogosHTML}
+                    </div>
+                </details>
             </div>
         `;
-        document.body.appendChild(modal);
-        setTimeout(() => {
-            document.getElementById('modal-detalhes').classList.remove('scale-95');
-        }, 10);
+
+        modal.classList.remove('hidden');
     }
 
     limparHistorico() {
-        this.mostrarAlertaComConfirmacao('Tem certeza que deseja limpar todo o histórico de apostas? Esta ação não pode ser desfeita.', () => {
-            this.historico = [];
-            this.salvarHistorico(this.historico);
-            this.atualizarExibicaoHistorico();
-            this.mostrarAlerta('Histórico de apostas limpo com sucesso.', 'success');
-        });
-    }
-
-    gerarJogos(idEstrategia) {
-        this.estrategiaAtual = idEstrategia;
-        const estrategia = this.analises.find(a => a.id === idEstrategia);
-        if (!this.ultimoResultado && idEstrategia === 1) {
-            this.mostrarAlerta('Por favor, salve o último resultado antes de usar a estratégia "Poder das Repetidas".', 'warning');
-            return;
+        if (confirm('Tem certeza que deseja limpar todo o histórico de apostas? Esta ação não pode ser desfeita.')) {
+          this.historico = [];
+          this.resultadosConcursos = {};
+          this.salvarHistorico();
+          this.salvarResultadosConcursos();
+          this.atualizarExibicaoHistorico();
+          this.exibirNotificacao('Histórico de apostas limpo com sucesso.', 'sucesso');
         }
-
-        this.mostrarLoading(true, `Gerando jogos com a estratégia "${estrategia.titulo}"...`);
-        setTimeout(() => {
-            this.jogosGerados = [];
-            const maxTentativas = 2000;
-            let tentativas = 0;
-
-            console.log(`🎲 Iniciando geração de jogos para estratégia ${idEstrategia}: ${estrategia.titulo}`);
-
-            // Tenta gerar jogos com a estratégia principal
-            while (this.jogosGerados.length < 10 && tentativas < maxTentativas) {
-                let novoJogo;
-                try {
-                    switch (idEstrategia) {
-                        case 1:
-                            novoJogo = estrategiaRepetidas(this.ultimoResultado);
-                            break;
-                        case 2:
-                            novoJogo = estrategiaParImpar();
-                            break;
-                        case 3:
-                            novoJogo = estrategiaAtrasados(calcularNumerosAtrasados(this.ultimos150Resultados));
-                            break;
-                        case 4:
-                            novoJogo = estrategiaSequenciasInteligentes();
-                            break;
-                        case 5:
-                            novoJogo = estrategiaDivisaoColunas();
-                            break;
-                        case 6:
-                            novoJogo = estrategiaFrequenciaHistorica(calcularFrequenciasGlobais(this.ultimos150Resultados));
-                            break;
-                        case 7:
-                            novoJogo = estrategiaMatematicaFinais();
-                            break;
-                        case 8:
-                            novoJogo = estrategiaFrequenciaMensal(calcularFrequenciasMensal(this.ultimos150Resultados));
-                            break;
-                        case 9:
-                            novoJogo = estrategiaTiraCinco(calcularNumerosMenosFrequentes(this.ultimos150Resultados, 5));
-                            break;
-                        case 10:
-                            // Bingo da Caixa: usa números de referência + complementares
-                            novoJogo = estrategiaBingoDaCaixa(this.numerosReferencia);
-                            break;
-                        case 11:
-                            // Força dos Primos: usa números primos como base
-                            novoJogo = estrategiaForcaPrimos();
-                            break;
-                        case 12:
-                            // Ciclo das Dezenas: prioriza números que faltam no ciclo
-                            const dezenasCiclo = calcularDezenasCiclo(this.ultimos150Resultados);
-                            const dezenasFrequentes = calcularNumerosMenosFrequentes(this.ultimos150Resultados, 5);
-                            console.log('📊 Dezenas do ciclo:', dezenasCiclo);
-                            console.log('📊 Dezenas frequentes:', dezenasFrequentes);
-                            novoJogo = estrategiaCicloDezenas(dezenasCiclo, dezenasFrequentes);
-                            break;
-                        default:
-                            novoJogo = gerarJogoAleatorio();
-                            break;
-                    }
-                } catch (error) {
-                    console.error(`❌ Erro ao gerar jogo na tentativa ${tentativas}:`, error);
-                    novoJogo = null;
-                }
-
-                if (novoJogo && Array.isArray(novoJogo) && novoJogo.length === 15) {
-                    // Validar que todos os números são únicos e estão no range correto
-                    const numerosUnicos = new Set(novoJogo);
-                    const todosValidos = novoJogo.every(n => n >= 1 && n <= 25);
-                    
-                    if (numerosUnicos.size === 15 && todosValidos && !this.jogoJaExiste(novoJogo, this.jogosGerados)) {
-                        this.jogosGerados.push(novoJogo);
-                        console.log(`✅ Jogo ${this.jogosGerados.length} gerado:`, novoJogo);
-                    }
-                }
-                tentativas++;
-            }
-
-            console.log(`📈 Após ${tentativas} tentativas, gerados ${this.jogosGerados.length} jogos`);
-
-            // Se não conseguiu gerar 10 jogos, completa com jogos aleatórios únicos
-            let tentativasExtras = 0;
-            while (this.jogosGerados.length < 10 && tentativasExtras < 1000) {
-                const jogoAleatorio = gerarJogoAleatorio();
-                if (!this.jogoJaExiste(jogoAleatorio, this.jogosGerados)) {
-                    this.jogosGerados.push(jogoAleatorio);
-                    console.log(`🎲 Jogo aleatório ${this.jogosGerados.length} adicionado`);
-                }
-                tentativasExtras++;
-            }
-
-            if (this.jogosGerados.length < 10) {
-                this.mostrarAlerta('Não foi possível gerar 10 jogos únicos. Verifique as estratégias e tente novamente.', 'error');
-            } else {
-                this.mostrarAlerta(`10 jogos gerados com a estratégia "${estrategia.titulo}"!`, 'success');
-            }
-
-            exibirJogosGerados(this.jogosGerados, this.analises, this.estrategiaAtual);
-            this.mostrarLoading(false);
-            document.getElementById('resultados').scrollIntoView({ behavior: 'smooth' });
-        }, 500);
+      }
+    
+    exportarDados() {
+        const dadosFiltrados = this.obterHistoricoFiltrado();
+        
+        if (dadosFiltrados.length === 0) {
+            return this.mostrarAlerta('Nenhum dado encontrado para exportação.', 'info');
+        }
+        
+        // Criar CSV
+        const header = ['Concurso', 'Data', 'Estratégia', 'Números', 'Status'];
+        const rows = dadosFiltrados.map(aposta => {
+            return [
+                aposta.concurso || 'N/A',
+                aposta.data || 'N/A',
+                aposta.estrategia || 'N/A',
+                aposta.jogos.map(jogo => jogo.join('-')).join(' | ') || 'N/A',
+                aposta.status === 'conferido' ? 'Conferido' : 'Pendente'
+            ];
+        });
+        
+        const csvContent = 'data:text/csv;charset=utf-8,' + [header, ...rows].map(e => e.join(',')).join('\n');
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', `historico_lotofacil_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
     }
 
 }
 
-// Inicialização da aplicação
+// Instancia a classe principal e inicia a aplicação
+const lotofacil = new LotofacilEstrategica();
 document.addEventListener('DOMContentLoaded', () => {
-    window.lotofacil = new LotofacilEstrategica();
+  // O init já é chamado no construtor, então não precisa chamar de novo.
 });
