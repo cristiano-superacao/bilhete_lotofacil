@@ -985,7 +985,7 @@ class LotofacilEstrategica {
                         break;
                     case 3:
                         // Nova estratégia otimizada: Distribuição Garantida
-                        novoJogo = estrategiaDistribuicaoGarantida(this.calcularFrequenciasGlobais(this.ultimos150Resultados));
+                        novoJogo = estrategiaDistribuicaoGarantida(calcularFrequenciasGlobais(this.ultimos150Resultados));
                         break;
                     case 4:
                         novoJogo = estrategiaSequenciasInteligentes();
@@ -994,39 +994,39 @@ class LotofacilEstrategica {
                         novoJogo = estrategiaDivisaoColunas();
                         break;
                     case 6:
-                        novoJogo = estrategiaFrequenciaHistorica(this.calcularFrequenciasGlobais(this.ultimos150Resultados));
+                        novoJogo = estrategiaFrequenciaHistorica(calcularFrequenciasGlobais(this.ultimos150Resultados));
                         break;
                     case 7:
                         novoJogo = estrategiaMatematicaFinais();
                         break;
                     case 8:
-                        novoJogo = estrategiaFrequenciaMensal(this.calcularFrequenciasMensal(this.ultimos150Resultados));
+                        novoJogo = estrategiaFrequenciaMensal(calcularFrequenciasMensal(this.ultimos150Resultados));
                         break;
                     case 9:
                         // Nova estratégia otimizada: Zona Quente
-                        novoJogo = estrategiaZonaQuente(this.calcularFrequenciasGlobais(this.ultimos150Resultados));
+                        novoJogo = estrategiaZonaQuente(calcularFrequenciasGlobais(this.ultimos150Resultados));
                         break;
                     case 10:
                         // Nova estratégia otimizada: Híbrida Otimizada
                         novoJogo = estrategiaHibridaOtimizada(
-                            this.calcularFrequenciasGlobais(this.ultimos150Resultados),
+                            calcularFrequenciasGlobais(this.ultimos150Resultados),
                             this.ultimoResultado,
-                            this.calcularNumerosAtrasados(this.ultimos150Resultados)
+                            calcularNumerosAtrasados(this.ultimos150Resultados)
                         );
                         break;
                     case 11:
                         // Nova estratégia otimizada: Fechamento Matemático
-                        novoJogo = estrategiaFechamentoMatematico(this.calcularFrequenciasGlobais(this.ultimos150Resultados));
+                        novoJogo = estrategiaFechamentoMatematico(calcularFrequenciasGlobais(this.ultimos150Resultados));
                         break;
                     case 12:
                         // Nova estratégia otimizada: Repetição Inteligente
                         novoJogo = estrategiaRepeticaoInteligente(
                             this.ultimoResultado,
-                            this.calcularFrequenciasGlobais(this.ultimos150Resultados)
+                            calcularFrequenciasGlobais(this.ultimos150Resultados)
                         );
                         break;
                     default:
-                        novoJogo = this.gerarJogoAleatorio();
+                        novoJogo = gerarJogoAleatorio();
                         break;
                 }
                 
@@ -1084,108 +1084,6 @@ class LotofacilEstrategica {
         });
         
         document.getElementById('resultados').classList.remove('hidden');
-    }
-    
-    gerarJogoAleatorio() {
-        const numeros = [];
-        while (numeros.length < 15) {
-            const num = Math.floor(Math.random() * 25) + 1;
-            if (!numeros.includes(num)) {
-                numeros.push(num);
-            }
-        }
-        return numeros.sort((a, b) => a - b);
-    }
-    
-    calcularFrequenciasGlobais(resultados) {
-        const frequencia = {};
-        for (let i = 1; i <= 25; i++) {
-            frequencia[i] = 0;
-        }
-        resultados.forEach(resultado => {
-            resultado.dezenas.forEach(dezena => {
-                frequencia[parseInt(dezena)]++; // Contagem de frequência
-            });
-        });
-        return frequencia;
-    }
-    
-    calcularFrequenciasMensal(resultados) {
-        const mesAtual = new Date().getMonth();
-        const frequencia = {};
-        for (let i = 1; i <= 25; i++) {
-            frequencia[i] = 0;
-        }
-        
-        resultados.forEach(resultado => {
-            const dataResultado = new Date(resultado.data);
-            if (dataResultado.getMonth() === mesAtual) {
-                resultado.dezenas.forEach(dezena => {
-                    frequencia[parseInt(dezena)]++; // Contagem de frequência mensal
-                });
-            }
-        });
-        return frequencia;
-    }
-    
-    calcularNumerosAtrasados(resultados) {
-        const ultimaAparicao = {};
-        for (let i = 1; i <= 25; i++) {
-            ultimaAparicao[i] = resultados.length;
-        }
-        
-        resultados.forEach((resultado, index) => {
-            resultado.dezenas.forEach(dezena => {
-                const num = parseInt(dezena);
-                if (ultimaAparicao[num] === resultados.length) {
-                    ultimaAparicao[num] = index;
-                }
-            });
-        });
-        
-        return Object.entries(ultimaAparicao)
-            .sort(([, a], [, b]) => b - a)
-            .map(([num]) => parseInt(num));
-    }
-    
-    calcularDezenasCiclo(numConcursos = 10) {
-        const dezenasSorteadas = new Set();
-        const concursosRecentes = this.ultimos150Resultados.slice(0, numConcursos);
-
-        if (concursosRecentes.length < numConcursos) {
-            return this.calcularNumerosMenosFrequentes(5);
-        }
-
-        concursosRecentes.forEach(concurso => {
-            concurso.dezenas.forEach(dezena => dezenasSorteadas.add(parseInt(dezena)));
-        });
-
-        const dezenasCiclo = [];
-        for (let i = 1; i <= 25; i++) {
-            if (!dezenasSorteadas.has(i)) {
-                dezenasCiclo.push(i);
-            }
-        }
-        
-        return dezenasCiclo.length > 0 ? dezenasCiclo : this.calcularNumerosMenosFrequentes(3);
-    }
-
-    calcularNumerosMenosFrequentes(quantidade) {
-        const frequencia = {};
-        for (let i = 1; i <= 25; i++) {
-            frequencia[i] = 0;
-        }
-
-        this.ultimos150Resultados.forEach(resultado => {
-            resultado.dezenas.forEach(numero => {
-                frequencia[parseInt(numero)]++;
-            });
-        });
-
-        return Object.entries(frequencia)
-            .sort(([, a], [, b]) => a - b)
-            .slice(0, quantidade)
-            .map(([num]) => parseInt(num));
     }
     
     configurarEventos() {
