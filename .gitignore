@@ -108,3 +108,13 @@ dist/
 
 # Local development
 *.local
+
+# Arquivos de debug e teste temporários
+debug-*.js
+test-*.js
+test-*.html
+teste-*.js
+CORRECOES*.md
+RESUMO_EXECUTIVO.md
+VALIDACAO_ESTRATEGIAS.md
+*_backup.*
