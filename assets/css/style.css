@@ -67,6 +67,14 @@
     transform: scale(1.1);
 }
 
+/* Variação compacta para modais/listas densas */
+.number-ball-compact {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    margin: 2px;
+}
+
 /* Bolas pequenas para o histórico */
 .number-ball-sm {
     width: 24px;
@@ -321,7 +329,7 @@
     display: grid !important;
     grid-auto-rows: auto !important;
     overflow: visible !important;
-    min-height: auto !important;
+    min-height: initial !important;
 }
 
 #cardsAnalises > div {

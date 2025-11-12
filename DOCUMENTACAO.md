@@ -2,7 +2,7 @@
 
 Bem-vindo ao **LotoFácil Estratégica**! Este é um sistema inteligente de geração de jogos da Lotofácil baseado em análises estatísticas e estratégias comprovadas, com infraestrutura serverless completa.
 
-**Versão**: 2.2.0 | **Infraestrutura**: PostgreSQL (Neon) + Netlify Functions | **Custo**: R$ 0,00/mês
+**Versão**: 2.3.0 | **Infraestrutura**: PostgreSQL (Neon) + Netlify Functions | **Custo**: R$ 0,00/mês
 
 ---
 
@@ -244,27 +244,34 @@ O sistema acompanha:
 4. O sistema irá:
    - ✅ Buscar o resultado oficial (API interna → fallback Caixa)
    - 🎯 Comparar seus 10 jogos com os números sorteados
-   - 💰 Calcular acertos e prêmios automaticamente
+   - 💰 **Buscar prêmios oficiais (rateio)** do concurso na API da CAIXA
+   - 💵 Calcular ganhos exatos usando os valores reais de cada faixa
    - 📊 Atualizar as estatísticas gerais
 
-**Tabela de Premiação**:
-- 15 acertos: R$ 398.110,55
-- 14 acertos: R$ 1.703,57
-- 13 acertos: R$ 35,00
-- 12 acertos: R$ 14,00
-- 11 acertos: R$ 7,00
+**Sistema de Premiação Inteligente**:
+- O sistema busca automaticamente os **prêmios oficiais (rateio)** de cada concurso na API da CAIXA
+- Para 15 e 14 acertos: usa valores do rateio oficial
+- Para 13, 12 e 11 acertos: 
+  - Prioriza rateio oficial quando disponível
+  - Caso não haja rateio, usa valores fixos: **R$ 35,00** (13), **R$ 14,00** (12), **R$ 7,00** (11)
+
+### 👁️ Ver Jogos
+
+- Clique em **"Ver Jogos"** em qualquer card do histórico
+- Visualize todos os 10 jogos da aposta em modal compacto e responsivo
+- Números exibidos em formato visual (bolinhas) para fácil identificação
 
 ### 📊 Informações Exibidas após Conferência
 
 - Concurso conferido
 - Melhor jogo (quantidade de acertos)
-- Total ganho
-- Total investido (R$ 3,00 por jogo)
-- Lucro ou prejuízo
+- **Total ganho (baseado em prêmios oficiais da CAIXA)**
+- Total investido (R$ 3,50 por jogo de 15 dezenas)
+- Lucro ou prejuízo real
 
-### 👁️ Ver Detalhes
-- Clique em **"Ver Todos"** para visualizar os 10 jogos completos
-- Clique em **"Remover"** para excluir do histórico
+### �️ Remover Apostas
+- Clique em **"Remover"** no card para excluir a aposta do histórico
+- Confirmação automática antes da exclusão
 
 ---
 
@@ -281,8 +288,8 @@ Após conferir suas apostas, o sistema gera automaticamente:
 ### 💰 Performance Financeira
 Dashboard completo com:
 
-- **Total Investido**: Soma de todas as apostas (R$ 3,00 cada jogo)
-- **Total Ganho**: Soma de todos os prêmios
+- **Total Investido**: Soma de todas as apostas (R$ 3,50 por jogo de 15 dezenas)
+- **Total Ganho**: Soma de todos os prêmios baseados em valores oficiais da CAIXA
 - **Lucro/Prejuízo**: Diferença entre ganhos e investimentos
 - **ROI**: Retorno sobre investimento em percentual
 - **Evolução**: Gráfico das últimas 10 apostas conferidas

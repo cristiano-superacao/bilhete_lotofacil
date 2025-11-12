@@ -4,6 +4,72 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 ---
 
+## [2.3.0] - 12 de Novembro de 2025
+
+### ✨ Novas Funcionalidades
+
+#### 👁️ Botão "Ver Jogos"
+- **Modal Compacto**: Visualize todos os 10 jogos de uma aposta salva em modal responsivo
+- **Design Otimizado**: Números exibidos em formato visual (bolinhas compactas) com scroll
+- **Acessibilidade**: Modal pode ser fechado clicando no X, no botão "Fechar" ou fora da área
+
+#### 🎯 Agendamento Automático de Apostas
+- **Próximo Concurso**: Apostas são automaticamente vinculadas ao próximo concurso disponível
+- **Exibição Clara**: Card mostra "Agendado para o concurso X" com destaque visual
+- **Incremento Inteligente**: Sistema detecta último concurso e salva para o próximo (ex: 3536 → 3537)
+
+#### 💰 Conferência com Rateio Oficial
+- **Prêmios Reais**: Sistema busca valores oficiais de premiação na API da CAIXA
+- **Extração de Rateio**: Parser automático de `listaRateioPremio` para cada faixa de acertos
+- **Persistência**: Resultados e prêmios salvos em `localStorage` (chave `resultados_concursos`)
+- **Ganhos Exatos**: Cálculo preciso usando valores oficiais por faixa (15, 14, 13, 12, 11 acertos)
+
+#### 🔄 Atualização de Resultados Aprimorada
+- **Botão "Atualizar Resultados"**: Busca e persiste resultados de todos os concursos no histórico
+- **Fetch de Prêmios**: Inclui dezenas sorteadas + valores de premiação (rateio)
+- **Conferível Automático**: Marca apostas como conferíveis quando resultado está disponível
+- **Refresh de Performance**: Recalcula estatísticas financeiras após atualização
+
+### 🔧 Melhorias e Correções
+
+#### 💵 Valores Oficiais da CAIXA
+- **Preço do Bilhete**: Atualizado para R$ 3,50 (15 dezenas)
+- **Prêmios Fixos Corrigidos**: 
+  - 11 acertos: R$ 5,00 → **R$ 7,00**
+  - 12 acertos: R$ 10,00 → **R$ 14,00**
+  - 13 acertos: R$ 25,00 → **R$ 35,00**
+- **Fonte**: Portal oficial da CAIXA (novembro/2025)
+
+#### 📊 Cálculo Financeiro Preciso
+- **Investido Real**: `precoPorJogo × quantidade real de jogos` (não mais fixo por aposta)
+- **Prêmios Oficiais**: Prioriza rateio da API; fallback para valores fixos quando indisponível
+- **Saldo Correto**: Ganhos - Investimentos usando valores reais
+
+#### 🎨 Melhorias Visuais
+- **Cards de Histórico**: Linha adicional "Agendado para o concurso X" em cinza
+- **Modal Ver Jogos**: Bolinhas compactas (`.number-ball-compact`) com grid responsivo
+- **Responsividade**: Modal adapta para mobile (1 jogo por linha) e desktop (até 2 jogos)
+
+### 🛠️ Alterações Técnicas
+
+#### Novos Métodos em `app.js`
+- `atualizarResultadosConcursos()`: Fetch e persist de resultados + prêmios
+- `extrairPremiosLotofacil(data)`: Parser de rateios da API CAIXA
+- `getInfoConcurso(concurso)`: Retorna {dezenas, premios} de concursos persistidos
+- `verJogos(id)`: Renderiza modal "Ver Jogos" para uma aposta
+- `exibirModalJogos(aposta)`: Monta e exibe modal com todos os jogos
+
+#### Atualizações de Persistência
+- **localStorage `resultados_concursos`**: Estrutura `{concurso: {dezenas: [], premios: {}}}`
+- **Prêmios por Faixa**: Mapeamento `{15: valor, 14: valor, ..., 11: valor}`
+- **Histórico Enriquecido**: Cada aposta inclui `concurso` e `dataReferencia`
+
+#### CSS
+- **Nova Classe**: `.number-ball-compact` para números menores em modais
+- **Fix de Compatibilidade**: `min-height: initial` para evitar conflitos
+
+---
+
 ## [2.2.0] - 09 de Novembro de 2025
 
 ### 🚀 Infraestrutura Serverless Completa

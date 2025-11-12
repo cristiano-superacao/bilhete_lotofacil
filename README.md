@@ -3,7 +3,7 @@
 <div align="center">
 
 ![Status](https://img.shields.io/badge/Status-Ativo-green)
-![Versão](https://img.shields.io/badge/Versão-2.2.0-blue)
+![Versão](https://img.shields.io/badge/Versão-2.3.0-blue)
 ![Licença](https://img.shields.io/badge/Licença-MIT-yellow)
 
 **Ferramenta inteligente de análise e geração de jogos para a Lotofácil baseada em estatísticas reais com infraestrutura serverless.**
@@ -22,17 +22,20 @@ O **LotoFácil Estratégica** é uma aplicação web completa que oferece 12 est
 
 Fornecer uma ferramenta profissional e gratuita para apostadores que desejam utilizar dados estatísticos e padrões históricos reais para otimizar suas escolhas, em vez de depender apenas da sorte.
 
-### 🌟 Novidades da Versão 2.2.0
+### 🌟 Novidades da Versão 2.3.0
 
-- **�️ Banco de Dados em Nuvem**: PostgreSQL serverless (Neon) com 200+ concursos armazenados
+- **🗄️ Banco de Dados em Nuvem**: PostgreSQL serverless (Neon) com 200+ concursos armazenados
 - **🚀 API Própria**: 4 endpoints serverless (Netlify Functions) para consulta otimizada
 - **🤖 Atualização Automática**: Scheduled function busca novos sorteios diariamente às 22h
 - **⚡ Performance 10x Melhor**: API Manager com fallback inteligente (API interna → Caixa)
-- **�📊 Histórico de Apostas Completo**: Salve seus jogos gerados, acompanhe estatísticas financeiras (total investido, ganhos e saldo) e confira resultados automaticamente
-- **✅ Conferência Inteligente**: O sistema habilita a conferência apenas para apostas cuja data coincide com o último sorteio disponível
+- **📊 Histórico de Apostas Completo**: Salve seus jogos gerados, acompanhe estatísticas financeiras (total investido, ganhos e saldo) e confira resultados automaticamente
+- **✅ Conferência Inteligente com Rateio Oficial**: Sistema busca prêmios reais de cada concurso (API CAIXA) e calcula ganhos exatos por faixa de acertos
+- **👁️ Botão "Ver Jogos"**: Visualize todos os jogos de uma aposta salva em modal compacto e responsivo
+- **🎯 Agendamento Automático**: Apostas salvas são automaticamente vinculadas ao próximo concurso (ex: 3537)
+- **💰 Preços Oficiais CAIXA**: Valor do bilhete R$ 3,50 e prêmios fixos atualizados (11=R$7, 12=R$14, 13=R$35)
 - **🔄 Integração com API da Caixa**: Busque resultados por número do concurso ou atualize apostas salvas com um clique
 - **🎨 Interface Redesenhada**: Layout responsivo e profissional em grid 4x3 para as estratégias e cards organizados para o histórico
-- **💾 Exportação de Dados**: Exporte seu histórico de apostas para arquivo JSON
+- **💾 Exportação de Dados**: Exporte seu histórico de apostas para arquivo JSON ou CSV
 - **📱 PWA (Progressive Web App)**: Instale a aplicação no seu dispositivo para acesso offline
 
 ---
@@ -130,24 +133,34 @@ Na seção **"Histórico de Apostas"**:
   - Nome da estratégia utilizada
   - Data e hora de geração
   - Número total de jogos
-  - Prévia dos números (primeiro jogo)
+  - **Número do concurso** (ex: "Agendado para o concurso 3537")
+  - Botões: **"Ver Jogos"** e **"Conferir"**
   - Status: **"Aguardando"** ou **"Conferido"**
 
-### 5️⃣ **Atualize e Confira os Resultados**
+### 5️⃣ **Visualize seus Jogos Salvos**
+
+- Clique no botão **"Ver Jogos"** em qualquer card do histórico
+- Veja todos os 10 jogos da aposta em um modal compacto e responsivo
+- Números exibidos em formato visual (bolinhas) para fácil visualização
+
+### 6️⃣ **Atualize e Confira os Resultados**
 
 Quando o resultado oficial for divulgado:
 1. Clique no botão **"Atualizar Resultados"** na seção de histórico.
-2. O sistema verificará quais apostas no seu histórico coincidem com a **data do último sorteio**.
-3. Essas apostas serão marcadas como **"conferíveis"** e o botão **"Conferir"** ficará verde.
-4. Clique em **"Conferir"** para ver quantos acertos você fez em cada jogo!
+2. O sistema buscará automaticamente os resultados oficiais da CAIXA (incluindo **rateios/prêmios reais**).
+3. Apostas com concursos sorteados ficam disponíveis para conferência (botão **"Conferir"** fica verde).
+4. Clique em **"Conferir"** para ver:
+   - Quantos acertos você fez em cada jogo
+   - Valor ganho por faixa (usando **prêmios oficiais** do rateio da CAIXA)
+   - Se não houver rateio disponível, usa valores fixos (11=R$7, 12=R$14, 13=R$35)
 
-### 6️⃣ **Acompanhe suas Estatísticas**
+### 7️⃣ **Acompanhe suas Estatísticas**
 
 No topo do histórico, você verá:
 - **Total de Apostas**: Quantidade de apostas salvas
-- **Total em Ganhos**: Soma dos prêmios (11, 12 e 13 acertos)
-- **Total Investido**: Valor gasto (R$ 3,00 por jogo)
-- **Saldo Geral**: Ganhos menos investimentos (negativo em vermelho)
+- **Total em Ganhos**: Soma dos prêmios baseada em valores oficiais da CAIXA
+- **Total Investido**: Valor gasto (R$ 3,50 por jogo de 15 dezenas)
+- **Saldo Geral**: Ganhos menos investimentos (negativo em vermelho, positivo em verde)
 
 ---
 
