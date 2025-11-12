@@ -45,11 +45,6 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Scheduled Functions
-[[functions]]
-  name = "atualizar-sorteios"
-  schedule = "0 1 * * *"  # Diariamente às 22h (BRT = 01:00 UTC)
-
 # Headers for security
 [[headers]]
   for = "/*"
