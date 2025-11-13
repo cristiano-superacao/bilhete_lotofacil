@@ -215,21 +215,27 @@
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-1">Período</label>
-                            <select id="filtroPeriodo" class="w-full px-3 py-2 border border-gray-300 rounded-lg" title="Filtrar por período">
+                            <select id="filtroPeriodo" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" title="Filtrar por período">
                                 <option value="todos">Todos os períodos</option>
+                                <option value="7">Últimos 7 dias</option>
+                                <option value="15">Últimos 15 dias</option>
+                                <option value="30">Últimos 30 dias</option>
+                                <option value="60">Últimos 60 dias</option>
+                                <option value="90">Últimos 90 dias</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-1">Estratégia</label>
-                            <select id="filtroEstrategia" class="w-full px-3 py-2 border border-gray-300 rounded-lg" title="Filtrar por estratégia">
+                            <select id="filtroEstrategia" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" title="Filtrar por estratégia">
                                 <option value="todas">Todas as estratégias</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-1">Status</label>
-                            <select id="filtroStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg" title="Filtrar por status">
+                            <select id="filtroStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" title="Filtrar por status">
                                 <option value="todos">Todos os status</option>
-                                <option value="aguardando">Aguardando</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="aguardando">Aguardando conferência</option>
                                 <option value="conferido">Conferido</option>
                             </select>
                         </div>
