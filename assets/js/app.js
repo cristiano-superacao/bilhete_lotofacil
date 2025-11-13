@@ -1176,6 +1176,123 @@ class LotofacilEstrategica {
                 }
             });
         }
+
+        // Filtros do histórico
+        this.configurarFiltrosHistorico();
+    }
+
+    configurarFiltrosHistorico() {
+        const filtroPeriodo = document.getElementById('filtroPeriodo');
+        const filtroEstrategia = document.getElementById('filtroEstrategia');
+        const filtroStatus = document.getElementById('filtroStatus');
+
+        // Event listeners para aplicar filtros
+        if (filtroPeriodo) {
+            filtroPeriodo.addEventListener('change', () => this.aplicarFiltrosHistorico());
+        }
+        if (filtroEstrategia) {
+            filtroEstrategia.addEventListener('change', () => this.aplicarFiltrosHistorico());
+        }
+        if (filtroStatus) {
+            filtroStatus.addEventListener('change', () => this.aplicarFiltrosHistorico());
+        }
+    }
+
+    aplicarFiltrosHistorico() {
+        const filtroPeriodo = document.getElementById('filtroPeriodo')?.value || 'todos';
+        const filtroEstrategia = document.getElementById('filtroEstrategia')?.value || 'todas';
+        const filtroStatus = document.getElementById('filtroStatus')?.value || 'todos';
+
+        let historicoFiltrado = [...this.historico];
+
+        // Filtro por período
+        if (filtroPeriodo !== 'todos') {
+            const dias = parseInt(filtroPeriodo);
+            const limite = Date.now() - (dias * 24 * 60 * 60 * 1000);
+            historicoFiltrado = historicoFiltrado.filter(aposta => {
+                const data = new Date(aposta.dataGeracao || aposta.data);
+                return !isNaN(data) ? data.getTime() >= limite : true;
+            });
+        }
+
+        // Filtro por estratégia
+        if (filtroEstrategia !== 'todas') {
+            historicoFiltrado = historicoFiltrado.filter(aposta => 
+                aposta.estrategia === filtroEstrategia
+            );
+        }
+
+        // Filtro por status
+        if (filtroStatus !== 'todos') {
+            if (filtroStatus === 'aguardando') {
+                historicoFiltrado = historicoFiltrado.filter(aposta => 
+                    aposta.status !== 'conferido' && aposta.conferivel
+                );
+            } else if (filtroStatus === 'conferido') {
+                historicoFiltrado = historicoFiltrado.filter(aposta => 
+                    aposta.status === 'conferido'
+                );
+            } else if (filtroStatus === 'pendente') {
+                historicoFiltrado = historicoFiltrado.filter(aposta => 
+                    aposta.status !== 'conferido' && !aposta.conferivel
+                );
+            }
+        }
+
+        // Atualiza a exibição com os dados filtrados
+        this.renderizarHistoricoFiltrado(historicoFiltrado);
+    }
+
+    renderizarHistoricoFiltrado(historicoFiltrado) {
+        const container = document.getElementById('historico-container');
+        if (!container) return;
+
+        if (!historicoFiltrado.length) {
+            container.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-filter text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-xl text-gray-500 mb-2">Nenhuma aposta encontrada</p>
+                    <p class="text-sm text-gray-400">Tente ajustar os filtros acima.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = historicoFiltrado.map(aposta => {
+            const conferivel = aposta.conferivel && aposta.status !== 'conferido';
+            const statusBadge = aposta.status === 'conferido'
+                ? '<span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">Conferido</span>'
+                : conferivel
+                    ? '<span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">Aguardando conferência</span>'
+                    : '<span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-600">Pendente</span>';
+
+            const sublineExtra = aposta.status !== 'conferido' && !conferivel
+                ? `<div class=\"text-xs text-gray-400 mt-1 flex items-center gap-1\">
+                        <i class=\"fas fa-calendar-alt\"></i>
+                        Agendado para o concurso ${aposta.concurso || 'N/A'}
+                   </div>`
+                : '';
+
+            return `
+            <div class="bg-white rounded-lg card-shadow p-4 flex flex-col">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="font-semibold text-gray-800">Concurso ${aposta.concurso || 'N/A'}</div>
+                    <div>${statusBadge}</div>
+                </div>
+                <div class="text-sm text-gray-500">${aposta.data || ''} • ${aposta.estrategia || ''}</div>
+                ${sublineExtra}
+                <div class="h-3"></div>
+                <div class="mt-auto grid grid-cols-2 gap-2">
+                    <button class="px-3 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700" data-action="ver-jogos" data-id="${aposta.id}">
+                        Ver Jogos
+                    </button>
+                    <button class="px-3 py-2 rounded bg-purple-600 text-white disabled:opacity-50" data-action="conferir" data-id="${aposta.id}" ${conferivel ? '' : 'disabled'}>
+                        Conferir
+                    </button>
+                </div>
+            </div>
+            `;
+        }).join('');
     }
 
     /**
@@ -1633,7 +1750,7 @@ class LotofacilEstrategica {
     // === MÉTODOS DE UI/UX ===
     
     atualizarExibicaoHistorico() {
-    const container = document.getElementById('historico-container');
+        const container = document.getElementById('historico-container');
         if (!container) return;
 
         // Garante memória sincronizada com storage
@@ -1641,14 +1758,17 @@ class LotofacilEstrategica {
             this.historico = this.carregarHistorico();
         }
 
+        // Atualiza opções de estratégias nos filtros
+        this.atualizarOpcoesEstrategias();
+
         // Estatísticas
         const totalApostasEl = document.getElementById('totalApostas');
         const totalGanhosEl = document.getElementById('totalGanhos');
         const totalInvestidoEl = document.getElementById('totalInvestido');
         const saldoGeralEl = document.getElementById('saldoGeral');
 
-    const totalApostas = this.historico.length;
-    const totalInvestido = this.historico.reduce((sum, a) => sum + (a.jogos?.length || 0) * this.precoPorJogo15, 0);
+        const totalApostas = this.historico.length;
+        const totalInvestido = this.historico.reduce((sum, a) => sum + (a.jogos?.length || 0) * this.precoPorJogo15, 0);
         const totalGanhos = this.historico.reduce((sum, a) => sum + (a.resultados?.ganhoTotal || 0), 0);
         const saldo = totalGanhos - totalInvestido;
 
@@ -1657,50 +1777,51 @@ class LotofacilEstrategica {
         if (totalInvestidoEl) totalInvestidoEl.textContent = `R$ ${totalInvestido.toFixed(2)}`;
         if (saldoGeralEl) saldoGeralEl.textContent = `R$ ${saldo.toFixed(2)}`;
 
-        // Renderização
+        // Renderização usando a função de renderização filtrada
         if (!this.historico.length) {
             container.innerHTML = `
                 <div class="col-span-full text-center py-12 text-gray-500">
-                    Nenhuma aposta salva ainda.
+                    <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-xl text-gray-500 mb-2">Nenhuma aposta salva ainda</p>
+                    <p class="text-sm text-gray-400">Gere jogos e salve no histórico para começar.</p>
                 </div>
             `;
             return;
         }
 
-        container.innerHTML = this.historico.map(aposta => {
-            const conferivel = aposta.conferivel && aposta.status !== 'conferido';
-            const statusBadge = aposta.status === 'conferido'
-                ? '<span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">Conferido</span>'
-                : conferivel
-                    ? '<span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">Aguardando conferência</span>'
-                    : '<span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-600">Pendente</span>';
+        // Usa a renderização filtrada (que pode mostrar todos se nenhum filtro ativo)
+        this.renderizarHistoricoFiltrado(this.historico);
+    }
 
-            const sublineExtra = aposta.status !== 'conferido' && !conferivel
-                ? `<div class=\"text-xs text-gray-400 mt-1 flex items-center gap-1\">
-                        <i class=\"fas fa-calendar-alt\"></i>
-                        Agendado para o concurso ${aposta.concurso || 'N/A'}
-                   </div>`
-                : '';
+    atualizarOpcoesEstrategias() {
+        const filtroEstrategia = document.getElementById('filtroEstrategia');
+        if (!filtroEstrategia) return;
 
-            return `
-            <div class="bg-white rounded-lg card-shadow p-4 flex flex-col">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="font-semibold text-gray-800">Concurso ${aposta.concurso || 'N/A'}</div>
-                    <div>${statusBadge}</div>
-                </div>
-                <div class="text-sm text-gray-500">${aposta.data || ''} • ${aposta.estrategia || ''}</div>
-                ${sublineExtra}
-                <div class="h-3"></div>
-                <div class="mt-auto grid grid-cols-2 gap-2">
-                    <button class="px-3 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700" data-action="ver-jogos" data-id="${aposta.id}">
-                        Ver Jogos
-                    </button>
-                    <button class="px-3 py-2 rounded bg-purple-600 text-white disabled:opacity-50" data-action="conferir" data-id="${aposta.id}" ${conferivel ? '' : 'disabled'}>
-                        Conferir
-                    </button>
-                </div>
-            </div>`;
-        }).join('');
+        // Salva o valor atual
+        const valorAtual = filtroEstrategia.value;
+
+        // Remove todas as opções exceto a primeira (Todas as estratégias)
+        while (filtroEstrategia.options.length > 1) {
+            filtroEstrategia.remove(1);
+        }
+
+        // Popula com estratégias únicas do histórico
+        const estrategiasUnicas = new Set();
+        this.historico.forEach(aposta => {
+            if (aposta.estrategia) estrategiasUnicas.add(aposta.estrategia);
+        });
+        
+        estrategiasUnicas.forEach(estrategia => {
+            const option = document.createElement('option');
+            option.value = estrategia;
+            option.textContent = estrategia;
+            filtroEstrategia.appendChild(option);
+        });
+
+        // Restaura o valor se ainda existir
+        if (valorAtual !== 'todas' && Array.from(filtroEstrategia.options).some(opt => opt.value === valorAtual)) {
+            filtroEstrategia.value = valorAtual;
+        }
     }
     
     mostrarLoading(exibir, mensagem = 'Carregando...') {
