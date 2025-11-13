@@ -1222,8 +1222,9 @@ class LotofacilEstrategica {
         apostasConferidas.forEach(aposta => {
             if (aposta.resultados && aposta.resultados.acertos) {
                 aposta.resultados.acertos.forEach(acerto => {
-                    if (contagemAcertos.hasOwnProperty(acerto.pontos)) {
-                        contagemAcertos[acerto.pontos]++;
+                    const pontos = String(acerto.acertos);
+                    if (contagemAcertos.hasOwnProperty(pontos)) {
+                        contagemAcertos[pontos]++;
                     }
                 });
             }
@@ -1234,7 +1235,7 @@ class LotofacilEstrategica {
         ultimas10Apostas.forEach(aposta => {
             performanceFinanceira.labels.push(`Concurso ${aposta.concurso}`);
             performanceFinanceira.investimentos.push(aposta.jogos.length * 3.50);
-            performanceFinanceira.ganhos.push(aposta.ganhoTotal || 0);
+            performanceFinanceira.ganhos.push(aposta.resultados?.ganhoTotal || 0);
         });
 
 
@@ -1414,6 +1415,7 @@ class LotofacilEstrategica {
 
         this.salvarHistorico();
         this.atualizarExibicaoHistorico();
+        this.atualizarAnalisePerformance();
 
         // Exibir modal com o resultado da conferência
         this.exibirModalResultadoConferencia(aposta, dezenasSorteadas, acertosPorJogo, ganhoTotalAposta);
