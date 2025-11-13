@@ -143,22 +143,13 @@ class LotofacilEstrategica {
         this.init();
     }
 
-    // Atualiza o histórico marcando jogos cuja data de geração é anterior ou igual à data do concurso carregado.
-    habilitarConferenciaApostas(dataConcursoCarregado) {
-        if (!dataConcursoCarregado) return;
+    // Atualiza o histórico marcando jogos cujo número do concurso tem resultado disponível
+    habilitarConferenciaApostas(numeroConcurso) {
+        if (!numeroConcurso) return;
 
-        // Normaliza a data para um objeto Date para comparação segura.
-        // A data pode vir como 'YYYY-MM-DD' ou 'DD/MM/YYYY'.
-        let dataReferencia;
-        if (String(dataConcursoCarregado).includes('/')) {
-            const [dia, mes, ano] = dataConcursoCarregado.split('/');
-            dataReferencia = new Date(`${ano}-${mes}-${dia}T23:59:59`); // Considera o final do dia do sorteio.
-        } else {
-            dataReferencia = new Date(`${dataConcursoCarregado}T23:59:59`); // Assume 'YYYY-MM-DD'.
-        }
-
-        if (isNaN(dataReferencia.getTime())) {
-            console.error('Data de referência para conferência é inválida:', dataConcursoCarregado);
+        const numConcurso = parseInt(numeroConcurso, 10);
+        if (!Number.isFinite(numConcurso)) {
+            console.error('Número de concurso inválido para conferência:', numeroConcurso);
             return;
         }
 
@@ -169,10 +160,8 @@ class LotofacilEstrategica {
             // Se a aposta já foi conferida, não faz nada.
             if (aposta.status === 'conferido') return;
 
-            const dataGeracaoAposta = new Date(aposta.dataGeracao);
-
-            // Habilita se a data de geração da aposta for anterior ou no mesmo dia do sorteio.
-            if (dataGeracaoAposta <= dataReferencia && !aposta.conferivel) {
+            // Habilita se o número do concurso da aposta corresponde ao concurso com resultado
+            if (aposta.concurso === numConcurso && !aposta.conferivel) {
                 aposta.conferivel = true;
                 jogosHabilitados++;
             }
@@ -634,10 +623,14 @@ class LotofacilEstrategica {
         };
         
         this.exibirUltimoResultado();
-        this.mostrarAlerta('Último resultado salvo com sucesso!', 'success');
         
         // Salvar no localStorage para recuperação
         localStorage.setItem('ultimo_resultado_manual', JSON.stringify(this.ultimoResultado));
+        
+        // Habilitar conferência para apostas deste concurso
+        this.habilitarConferenciaApostas(numConcurso);
+        
+        this.mostrarAlerta('Último resultado salvo com sucesso!', 'success');
     }
     
     exibirUltimoResultado() {
@@ -1864,8 +1857,8 @@ class LotofacilEstrategica {
                         const dezenasNum = res.dezenas.map(d => parseInt(d, 10));
                         this.resultadosConcursos[concurso] = { dezenas: dezenasNum, premios: res.premios || {} };
                         atualizados++;
-                        // Habilita conferência com base na data do concurso
-                        this.habilitarConferenciaApostas(res.data);
+                        // Habilita conferência com base no número do concurso
+                        this.habilitarConferenciaApostas(concurso);
                     }
                 }
             }
