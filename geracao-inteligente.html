@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geração Inteligente - Lotofácil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .numero-selecionado {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 6px rgba(102, 126, 234, 0.4);
+        }
+        .numero-frequente {
+            border: 2px solid #10b981;
+            background-color: #d1fae5;
+        }
+        .numero-medio {
+            border: 2px solid #f59e0b;
+            background-color: #fef3c7;
+        }
+        .numero-raro {
+            border: 2px solid #ef4444;
+            background-color: #fee2e2;
+        }
+        .criterio-ativo {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        .jogo-card {
+            transition: all 0.3s ease;
+        }
+        .jogo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+        }
+        .score-badge {
+            animation: pulse-green 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                        <i class="fas fa-brain mr-3"></i>Geração Inteligente
+                    </h1>
+                    <p class="text-gray-600 mt-2">Baseada em análise de 500 concursos reais</p>
+                </div>
+                <button onclick="location.href='index.html'" class="bg-gray-100 hover:bg-gray-200 px-6 py-3 rounded-lg transition-colors">
+                    <i class="fas fa-home mr-2"></i>Voltar
+                </button>
+            </div>
+        </div>
+
+        <!-- Painel de Configuração -->
+        <div class="grid lg:grid-cols-3 gap-6 mb-8">
+            <!-- Critérios -->
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-xl p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-sliders-h mr-2"></i>Critérios de Geração
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="border-2 border-green-200 rounded-lg p-4 hover:border-green-400 transition-colors">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="criterio-frequentes" class="w-5 h-5 text-purple-600 rounded" checked>
+                            <div class="ml-3">
+                                <span class="font-semibold text-gray-800">Números Frequentes</span>
+                                <p class="text-sm text-gray-500">Prioriza top 10 mais sorteados (67-76%)</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="border-2 border-blue-200 rounded-lg p-4 hover:border-blue-400 transition-colors">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="criterio-equilibrio" class="w-5 h-5 text-purple-600 rounded" checked>
+                            <div class="ml-3">
+                                <span class="font-semibold text-gray-800">Equilíbrio Par/Ímpar</span>
+                                <p class="text-sm text-gray-500">87.2% dos concursos têm equilíbrio</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="border-2 border-purple-200 rounded-lg p-4 hover:border-purple-400 transition-colors">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="criterio-sequencias" class="w-5 h-5 text-purple-600 rounded" checked>
+                            <div class="ml-3">
+                                <span class="font-semibold text-gray-800">Sequências Consecutivas</span>
+                                <p class="text-sm text-gray-500">99.6% têm sequências (ex: 5-6-7)</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="border-2 border-orange-200 rounded-lg p-4 hover:border-orange-400 transition-colors">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="criterio-distribuicao" class="w-5 h-5 text-purple-600 rounded" checked>
+                            <div class="ml-3">
+                                <span class="font-semibold text-gray-800">Distribuição Equilibrada</span>
+                                <p class="text-sm text-gray-500">Baixos (1-12) e Altos (13-25)</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="border-2 border-pink-200 rounded-lg p-4 hover:border-pink-400 transition-colors">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="criterio-repeticao" class="w-5 h-5 text-purple-600 rounded" checked>
+                            <div class="ml-3">
+                                <span class="font-semibold text-gray-800">Repetição Histórica</span>
+                                <p class="text-sm text-gray-500">Média 9 números repetidos</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="border-2 border-indigo-200 rounded-lg p-4 hover:border-indigo-400 transition-colors">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="criterio-primos" class="w-5 h-5 text-purple-600 rounded">
+                            <div class="ml-3">
+                                <span class="font-semibold text-gray-800">Números Primos</span>
+                                <p class="text-sm text-gray-500">Incluir 3-5 primos por jogo</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex gap-4">
+                    <button onclick="gerarJogosInteligentes()" class="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-magic mr-2"></i>Gerar 10 Jogos Inteligentes
+                    </button>
+                    <button onclick="limparJogos()" class="bg-gray-200 hover:bg-gray-300 px-6 py-4 rounded-xl transition-colors">
+                        <i class="fas fa-eraser mr-2"></i>Limpar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Legenda -->
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-info-circle mr-2"></i>Legenda de Frequência
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg numero-frequente flex items-center justify-center font-bold">15</div>
+                        <div class="ml-3">
+                            <p class="font-semibold text-gray-800">Alta (67-76%)</p>
+                            <p class="text-sm text-gray-500">Top 10 mais sorteados</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg numero-medio flex items-center justify-center font-bold">10</div>
+                        <div class="ml-3">
+                            <p class="font-semibold text-gray-800">Média (55-66%)</p>
+                            <p class="text-sm text-gray-500">Frequência moderada</p>
+                            </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg numero-raro flex items-center justify-center font-bold">5</div>
+                        <div class="ml-3">
+                            <p class="font-semibold text-gray-800">Baixa (&lt;55%)</p>
+                            <p class="text-sm text-gray-500">Menos sorteados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
+                    <h4 class="font-bold text-gray-800 mb-2">Score de Qualidade</h4>
+                    <p class="text-sm text-gray-600">
+                        Cada jogo recebe pontuação baseada nos critérios selecionados. Quanto maior o score, melhor a aderência aos padrões históricos.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div id="resultados-container" class="hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+                <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-trophy mr-2 text-yellow-500"></i>Jogos Gerados
+                    </h2>
+                    <div class="flex gap-2">
+                        <button onclick="copiarTodosJogos()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-copy mr-2"></i>Copiar Todos
+                        </button>
+                        <button onclick="exportarJogos()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-download mr-2"></i>Exportar
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="jogos-grid" class="grid md:grid-cols-2 gap-4"></div>
+            </div>
+
+            <!-- Estatísticas -->
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Score Médio</p>
+                            <p id="score-medio" class="text-3xl font-bold text-purple-600">-</p>
+                        </div>
+                        <i class="fas fa-chart-line text-4xl text-purple-200"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Investimento</p>
+                            <p id="investimento-total" class="text-3xl font-bold text-green-600">R$ 35,00</p>
+                        </div>
+                        <i class="fas fa-coins text-4xl text-green-200"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Números Únicos</p>
+                            <p id="numeros-unicos" class="text-3xl font-bold text-blue-600">-</p>
+                        </div>
+                        <i class="fas fa-hashtag text-4xl text-blue-200"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/geracao-inteligente.js"></script>
+</body>
+</html>
